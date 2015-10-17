@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <link href="/public/assets/metro/metro.min.css" rel="stylesheet">
+    <link href="/public/assets/metro/metro-icons.min.css" rel="stylesheet">
+    <link href="/public/assets/metro/metro-schemes.min.css" rel="stylesheet">
+    <link href="/public/assets/metro/metro-responsive.min.css" rel="stylesheet">
+
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="/public/assets/metro/metro.js"></script>
+    <script src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+
+    <style>
+        body {
+            background: #1d1d1d;
+
+        }
+
+        tr.center > th, tbody {
+            text-align: center;
+        }
+
+        .progress, .progress-bar {
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-bottom: 0;
+            margin-top: 0;
+
+        }
+
+        .test.table tbody td {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+<div class="app-bar darcula" data-role="appbar">
+    <a class="app-bar-element branding">MyDashboard</a>
+    <span class="app-bar-divider"></span>
+    <ul class="app-bar-menu">
+        <li><a href="">Home</a></li>
+        <li>
+            <a href="" class="dropdown-toggle">Debug</a>
+        </li>
+        <li><a href="">Help</a></li>
+    </ul>
+    <div class="app-bar-element place-right">
+        <a class="dropdown-toggle fg-white"><span class="mif-enter"></span> Enter</a>
+
+        <div class="app-bar-drop-container place-right" data-role="dropdown" data-no-close="true">
+            <div class="padding20">
+                <form>
+                    <h4 class="text-light">Login to service...</h4>
+
+                    <div class="input-control text">
+                        <span class="mif-user prepend-icon"></span>
+                        <input type="text">
+                    </div>
+                    <div class="input-control text">
+                        <span class="mif-lock prepend-icon"></span>
+                        <input type="password">
+                    </div>
+                    <label class="input-control checkbox small-check">
+                        <input type="checkbox">
+                        <span class="check"></span>
+                        <span class="caption">Remember me</span>
+                    </label>
+
+                    <div class="form-actions">
+                        <button class="button primary">Login</button>
+                        <button class="button link fg-grayLighter">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="grid condensed">
+    <div class="row cells2 ">
+        <!-- left column -->
+        <div class="cell">
+            <div class="row cells6 flex-wrap">
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+            </div>
+        </div>
+        <div class="cell" >
+            <div class="row cells6">
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile bg-darkBlue"></div>
+                </div>
+                <div class="cell">
+                    <div class="tile-wide bg-darkBlue"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- right column -->
+
+
+<script>
+    $(document).ready(function () {
+        //$('#example').DataTable();
+
+        var logs = $('#logs').DataTable({
+            "paging": false,
+            "bInfo": false,
+            "bFilter": false,
+            "bSort": false,
+            "ajax": {
+                "url": 'http://localhost:8080/api/getLogs/?limit=8',
+                "dataSrc": "prtg"
+            },
+            "columns": [
+
+                {"data": "parent"},
+
+                {"data": "datetime"},
+
+                {"data": "message_raw", "visible": true, 'width': '45%', 'className': 'align-center'}
+
+            ],
+
+
+            "columnDefs": [
+                {className: "table-column-center", "targets": [0, 1]}
+            ]
+        });
+
+        var table = $('#virtualMachines').DataTable({
+            "paging": false,
+            "bInfo": false,
+            "bFilter": false,
+            "bSort": false,
+            "ajax": {
+                "url": 'http://localhost:8080/api/getGroupDevices/2009',
+                "dataSrc": "prtg.devices"
+            },
+            "columns": [
+                {"data": "objid", "visible": false},
+
+                {"data": "device"},
+
+                {"data": "group"},
+
+                {"data": "probe", "visible": false},
+
+                {
+                    "defaultContent": "<span class='mif-spinner mif-ani-spin'></span>",
+                    "data": "existing",
+                    "visible": true,
+                    "width": "30%"
+                },
+
+                {
+                    "defaultContent": "<span class='mif-spinner mif-ani-spin'></span>",
+                    "data": "existing",
+                    "visible": true,
+                    "width": "20%"
+                },
+
+                {
+                    "defaultContent": "<span class='mif-spinner mif-ani-spin'></span>",
+                    "data": "existing",
+                    "visible": true,
+                    "width": "20%"
+                }
+            ]
+        });
+
+
+        $.ajax({
+            url: 'https://api.particle.io/v1/devices/280021000547343339373536/Temperature?access_token=0b6c8c27e98ce61d0895f31abe160695ed5d11c5',
+            dataType: 'json',
+            success: function (response) {
+                $('#Particle').html((response.result).toFixed(1) + " &deg;C");
+                $("#ParticleTile").removeClass("bg-red").addClass("bg-green").find(".tile-label").html("Online");
+
+
+            },
+            error: function (response) {
+                console.log(response)
+                $('#Particle').removeClass("bg-green").addClass("bg-red");
+                $("#ParticleTile").find(".tile-label").html("Offline");
+            }
+        });
+
+        setInterval(function () {
+            currentTime('LocalTime');
+        }, 1000);
+
+
+        setTimeout(function () {
+
+            serviceStatus("mysql");
+            serviceStatus("jira");
+            serviceStatus("apache");
+            serviceStatus("plex");
+
+            prtgSystemStatus('alarms', 'warnings');
+
+            getPing(2013, 'responseTime');
+            getUpTime(2013, 'upTime');
+
+            getGraph(2118, 'MySQL', '2.1');
+            getGraph(2121, 'plexPing', '2.1');
+            getGraph(2131, 'jiraPing', '2.1');
+            getGraph(2145, 'network', '11.10.9.8.7.6.5.1.0');
+            logs.ajax.reload();
+
+            table.rows().every(function () {
+                //console.log(this.data());
+                //console.log(this.index());
+                var row = this.index();
+                var data = this.data();
+                var deviceID = this.data().objid;
+                console.log(deviceID);
+                $.ajax({
+                    url: 'http://localhost:8080/api/getMemory/' + deviceID,
+                    dataType: 'json',
+                    success: function (response) {
+                        //console.log(response);
+                        //console.log( response.Sensor.lastValue);
+                        var text = response.prtg.sensors[0].lastvalue;
+                        var lastValue = parseInt(response.prtg.sensors[0].lastvalue);
+                        console.log(lastValue);
+                        if (isNaN(lastValue))
+                            table.cell(row, -3).data("<span class='tag alert align-center'>ERROR : Sensor Down </span>").draw();
+                        else {
+                            table.cell(row, -3).data("<span data-role='hint' data-hint-background='bg-gray' data-hint-color='fg-white' data-hint-mode='2' data-hint-position='top-ProgressBar' data-hint='" + (100 - lastValue) + "%'><div class='progress large' data-value='" + (100 - lastValue) + "' data-colors='{\"bg-green\": 50, \"bg-yellow\": 70, \"bg-orange\": 90, \"bg-red\": 100}' data-role='progressBar'></div></span>").draw();
+                        }
+                    }
+                });
+
+
+                $.ajax({
+                    url: 'http://localhost:8080/api/getCPU/' + deviceID,
+                    dataType: 'json',
+                    success: function (response) {
+                        //console.log(response);
+                        //console.log( response.Sensor.lastValue);
+                        var text = response.prtg.sensors[0].lastvalue;
+                        var lastValue = parseInt(response.prtg.sensors[0].lastvalue);
+                        console.log(lastValue);
+                        if (isNaN(lastValue))
+                            table.cell(row, -2).data("<span class='tag alert align-center'>ERROR : Sensor Down </span>").draw();
+                        else {
+                            table.cell(row, -2).data("<span data-role='hint' data-hint-background='bg-gray' data-hint-color='fg-white' data-hint-mode='2' data-hint-position='top-ProgressBar' data-hint='" + lastValue + "%'><div class='progress large' data-value='" + lastValue + "' data-colors='{\"bg-green\": 50, \"bg-yellow\": 70, \"bg-orange\": 90, \"bg-red\": 100}' data-role='progressBar'></div></span>").draw();
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: 'http://localhost:8080/api/getDisk/' + deviceID,
+                    dataType: 'json',
+                    success: function (response) {
+                        //console.log(response);
+                        //console.log( response.Sensor.lastValue);
+                        var text = response.prtg.sensors[0].lastvalue;
+                        var lastValue = parseInt(response.prtg.sensors[0].lastvalue);
+                        console.log(lastValue);
+                        if (isNaN(lastValue))
+                            table.cell(row, -1).data("<span class='tag alert align-center' >ERROR : Sensor Down </span>").draw();
+                        else {
+                            table.cell(row, -1).data("<span data-role='hint' data-hint-background='bg-gray' data-hint-color='fg-white' data-hint-mode='2' data-hint-position='top-ProgressBar' data-hint='" + (100 - lastValue) + "%'><div class='progress large ' data-value='" + (100 - lastValue) + "' data-colors='{\"bg-green\": 50, \"bg-yellow\": 70, \"bg-orange\": 90, \"bg-red\": 100}' data-role='progressBar'></div></span>").draw();
+                        }
+
+
+                    }
+                });
+            });
+
+
+        }, 5000);
+
+    });
+
+
+    function getGraph(SensorID, Id, HideCustom) {
+        $.ajax({
+            url: 'http://localhost:8080/api/getGraph/' + SensorID + '/' + HideCustom,
+
+            success: function (response) {
+                $("#" + Id).html(response);
+                //console.log(response);
+
+            },
+            error: function (response) {
+                console.log("ERROR PICTURE")
+            }
+        });
+    }
+
+    function getPing(SensorId, Id) {
+        $.ajax({
+            url: 'http://localhost:8080/api/getPing/' + SensorId,
+            dataType: 'json',
+            success: function (response) {
+                $("#" + Id).html("<div><span class='fg-blue'>" + parseInt(response.prtg.sensors[0].lastvalue) + "</span> ms</div>");
+                console.log("lastValue : " + response.prtg.sensors[0].lastvalue);
+
+            }
+        });
+    }
+
+    function getUpTime(SensorID, Id) {
+        $.ajax({
+            url: 'http://localhost:8080/api/getUpTime/' + SensorID,
+            dataType: 'json',
+            success: function (response) {
+                $("#" + Id).html("<span class='fg-blue'>" + (response.prtg.sensors[0].lastvalue) + "</span>");
+                console.log("Uptime: " + response.prtg.sensors[0].lastvalue);
+            }
+        });
+    }
+
+    function prtgSystemStatus(alarmId, warningID) {
+        $.ajax({
+            url: 'http://localhost:8080/api/getSystemStatus',
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+
+                $("#" + alarmId).html("<strong>" + response.prtg.Alarms + "</strong>");
+                //console.log("nbOf_newAlarms: " + response.nbOf_alarms);
+
+                $("#" + warningID).html("<strong>" + response.prtg.WarnSens + "</strong>");
+                //console.log("nbOf_warningSensors :" + response.nbOf_warningSensors);
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function currentTime(ID) {
+        var date = new Date();
+        var time = date.toLocaleTimeString();
+        $('#' + ID).find("#time").html(time);
+    }
+
+
+    function serviceStatus(service) {
+        $.ajax({
+            url: 'http://localhost:8080/api/getCustomSensor/' + service,
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+
+                var id = "#" + service;
+                console.log(id);
+
+                switch (response.prtg.sensors[0].status_raw) {
+                    //success
+                    case 3:
+                        $(id).removeClass("bg-red").removeClass("bg-yellow").addClass("bg-green");
+                        $(id).find(".tile-label").html("Online");
+                        break;
+                    //warning
+                    case 4:
+                        $(id).removeClass("bg-red").removeClass("bg-green").addClass("bg-yellow");
+                        $(id).find(".tile-label").html("Error");
+                        break;
+                    // 5 down
+                    default:
+                        $(id).removeClass("bg-yellow").removeClass("bg-green").addClass("bg-red");
+                        $(id).find(".tile-label").html("Offline");
+                }
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>

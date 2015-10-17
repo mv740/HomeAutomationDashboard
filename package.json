@@ -1,0 +1,33 @@
+{
+  "name": "homeautomatondashboard",
+  "version": "1.0.0",
+  "description": "Application dashboard which keep track of different services",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mv740/HomeAutomatonDashboard.git"
+  },
+  "author": "Michal Wozniak",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mv740/HomeAutomatonDashboard/issues"
+  },
+  "homepage": "https://github.com/mv740/HomeAutomatonDashboard#readme",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "connect-flash": "^0.1.1",
+    "express": "^4.13.3",
+    "express-session": "^1.11.3",
+    "mongodb": "^2.0.46",
+    "mongoose": "^4.1.11",
+    "needle": "^0.10.0",
+    "passport": "^0.3.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.3.0"
+  }
+}

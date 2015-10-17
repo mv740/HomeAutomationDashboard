@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<html lang="en" ng-app="Dashboard">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<link href="/public/assets/metro/metro.min.css" rel="stylesheet">
+<link href="/public/assets/metro/metro-icons.min.css" rel="stylesheet">
+<link href="/public/assets/metro/metro-schemes.min.css" rel="stylesheet">
+<link href="/public/assets/metro/metro-responsive.min.css" rel="stylesheet">
+
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="/public/assets/metro/metro.js"></script>
+
+<style>
+    body {
+        background: #1d1d1d;
+
+    }
+
+
+</style>
+</head>
+
+<body>
+<div class="app-bar darcula" data-role="appbar">
+    <a class="app-bar-element branding">MyDashboard</a>
+    <span class="app-bar-divider"></span>
+    <ul class="app-bar-menu">
+        <li><a href="">Home</a></li>
+        <li>
+            <a href="" class="dropdown-toggle">Debug</a>
+        </li>
+        <li><a href="">Help</a></li>
+    </ul>
+    <div class="app-bar-element place-right">
+        <a class="dropdown-toggle fg-white"><span class="mif-enter"></span> Enter</a>
+
+        <div class="app-bar-drop-container place-right" data-role="dropdown" data-no-close="true">
+            <div class="padding20">
+                <form>
+                    <h4 class="text-light">Login to service...</h4>
+
+                    <div class="input-control text">
+                        <span class="mif-user prepend-icon"></span>
+                        <input type="text" ng-model="login.username">
+                    </div>
+                    <div class="input-control text">
+                        <span class="mif-lock prepend-icon"></span>
+                        <input type="password" ng-model="login.password">
+                    </div>
+                    <label class="input-control checkbox small-check">
+                        <input type="checkbox">
+                        <span class="check"></span>
+                        <span class="caption">Remember me</span>
+                    </label>
+
+                    <div class="form-actions">
+                        <button class="button primary" ng-click="login(login.username, login.password)">Login</button>
+                        <button class="button link fg-grayLighter">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="" style="margin-top: 50px;">
+        <div ng-controller="Service as ctrl" class="grid">
+
+            <div class="row cells4">
+                <div class="cell colspan3 ">
+                    <div class="panel">
+                        <div class="heading">
+                            <span class="title">Services</span>
+                        </div>
+                        <div class="content ">
+                            <table class="table ">
+                                <thead>
+                                <tr class="">
+                                    <th class="">Service name</th>
+                                    <th>Type</th>
+                                    <th></th>
+                                    <th> Hide</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- | orderBy:'-serviceName':true-->
+                                <tr class="" ng-repeat="service in ctrl.tableResult">
+                                    <td width="30%">
+                                        <div ng-hide="service.editMode">
+                                            <div class="input-control text">{{ service.serviceName }}</div>
+                                        </div>
+                                        <div ng-show="service.editMode" data-role="input">
+                                            <div class="input-control text">
+                                                <input type="text" ng-model="serviceEdit.serviceName">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td width="30%">
+                                        <div ng-hide="service.editMode">
+                                                <div class="input-control text">{{ service.serviceType }}</div>
+                                        </div>
+                                        <div ng-show="service.editMode" class="input-control select" data-role="input">
+                                            <select ng-model="service.serviceType" data-validate-func="required"
+                                                    required>
+                                                <option
+                                                        ng-selected="type.serviceType == service.serviceType"
+                                                        ng-repeat="type in ctrl.serviceInfo"
+                                                        value="{{type.serviceType}}">{{type.serviceType}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-actions">
+                                            <button ng-hide="service.editMode" class="button primary"
+                                                    ng-click="ctrl.startEditService(service)"><span
+                                                    class="mif-pencil"></span></button>
+                                            <button ng-hide="service.editMode" class="button danger"
+                                                    ng-click="ctrl.deleteService($index,service)"><span
+                                                    class="mif-bin"></span>
+                                            </button>
+                                            <button ng-show="service.editMode"
+                                                    ng-click="ctrl.updateServiceTest(service, serviceEdit)"
+                                                    class="button success"><span
+                                                    class="mif-checkmark"></span></button>
+                                            <button ng-show="service.editMode" class="button warning"
+                                                    ng-click="ctrl.cancelEditService(service, serviceEdit)"><span
+                                                    class="mif-cancel"></span></button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <label class="switch-original">
+                                            <input type="checkbox" checked>
+                                            <span class="check"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="cell">
+                    <div class="panel">
+                        <div class="heading">
+                            <span class="title">add a service</span>
+                        </div>
+                        <div class="content">
+                            <div id="ctrl.form">
+                                <form name="ctrl.formAddService" novalidate
+                                      ng-submit="ctrl.formAddService.$valid && ctrl.addService(service)"
+                                      data-role="validator">
+
+                                    <ng-view>
+
+                                        <div class="input-control  full-size" data-role="input">
+                                            <label for="inputSelect">Name:</label>
+                                            <input id="inputSelect" type="text" ng-model="ctrl.service.name"
+                                                   data-validate-func="required" required>
+                                        </div>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+
+                                        <div class="input-control select full-size" data-role="input">
+                                            <label for="repeatSelect">Type:</label>
+                                            <select id="repeatSelect" ng-model="ctrl.service.type"
+                                                    data-validate-func="required" required>
+                                                <option ng-repeat="type in ctrl.serviceInfo"
+                                                        value="{{type.serviceType}}">{{type.serviceType}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </ng-view>
+                                    <div class="align-right">
+                                        <button class="button primary" type="submit">Add</button>
+
+                                    </div>
+                                    {{ctrl.service.name}} {{ctrl.service.type}}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="row">
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Load Js libs -->
+<!--
+<script type="text/javascript" src="/node_modules/angular/angular.min.js"></script>
+<script type="text/javascript" src="/node_modules/angular-route/angular-route.min.js"></script>
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-route.min.js"></script>
+
+<!-- client js-->
+<script type="text/javascript" src="/public/assets/js/application.js"></script>
+<script type="text/javascript" src="/public/assets/js/test.controller.js"></script>
+
+
+</body>
+</html>

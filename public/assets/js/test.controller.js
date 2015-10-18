@@ -84,13 +84,15 @@
 
             };
 
-            vm.updateServiceTest = function (service) {
+            vm.updateServiceTest = function (service, index) {
                 //console.log("update");
                 console.log(service);
+                alert(index);
                 var newService = {
                     service: {
                         type: service.serviceType,
                         name: service.serviceName
+
                     }
                 };
                 $http.post("/api/updateService", newService)
@@ -205,6 +207,3 @@
         }])
 
 }());
-
-
-

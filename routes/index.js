@@ -92,13 +92,13 @@ router.post('/login', passport.authenticate('local1'), function (req, res) {
     console.log(req.body);
     res.redirect('/');
 });
+
+//todo : create cliend side service that will catch 401/200 status code
 router.post('/public/loginPage.html',
-    passport.authenticate('local1',
-        {
-            successRedirect: '/1',
-            failureRedirect: '/public/loginPage.html',
-            failureFlash: true
-        })
+    passport.authenticate('local1'),
+    function(req, res){
+        res.sendStatus(200);
+    }
 );
 router.get('/public/loginPage.html', function (req, res) {
     console.log(req.flash('error'));
@@ -223,10 +223,19 @@ router.post('/api/updateService', function (req, res) {
     };
 
     //The $push operator appends a specified value to an array.
+    /*
+    //Todo Since we can't do double dot notation, we will to query to find the row id of settingSetting[?]
+    MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": type,  "ServiceSetting.service.serviceName":req.body.service.name},
+        {$set: {"ServiceSetting.$.service": [{"serviceName":"s"}]}},
+        function (err, model) {
+            console.log(err);
+            //console.log(model);
+        });
 
+    //
     MemberModel.findOne({ "username": 'mv740', "ServiceSetting.serviceType": type},
         function (err,model) {
-            //{"ServiceSetting.$.service.0.serviceName": "mil"}
+            //show the type document row [] 
             var found;
             for(var x=0; x < model.ServiceSetting.length; x++)
             {
@@ -252,7 +261,7 @@ router.post('/api/updateService', function (req, res) {
             console.log("error: "+err);
         });
 
-
+    */
     //console.log(req.body.service.type);
     res.end();
 });
@@ -390,4 +399,8 @@ router.get('/api/particle/temperature/:tag', function (request, response) {
 
 });
 
+//if url query doesn't match any previous router.get then it will go here and redirect to main page
+router.get('*', function(req, res){
+    res.redirect('/')
+});
 module.exports = router;

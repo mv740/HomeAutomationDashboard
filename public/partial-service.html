@@ -1,0 +1,126 @@
+<div ng-controller="Service as ctrl" class="grid">
+
+    <div class="row cells4">
+        <div class="cell colspan3 ">
+            <div class="panel">
+
+                <div class="heading">
+                    <span class="title">Services</span>
+                </div>
+                <div class="content ">
+                    <table class="table ">
+                        <thead>
+                        <tr class="">
+                            <th class="">Service name</th>
+                            <th>Type</th>
+                            <th></th>
+                            <th> Hide</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- | orderBy:'-serviceName':true-->
+                        <tr class="" ng-repeat="service in ctrl.tableResult">
+                            <td width="30%">
+                                <div ng-hide="service.editMode">
+                                    <div class="input-control text">{{ service.serviceName }}</div>
+                                </div>
+                                <div ng-show="service.editMode" data-role="input">
+                                    <div class="input-control text">
+                                        <input type="text" ng-model="serviceEdit.serviceName">
+                                    </div>
+                                </div>
+                            </td>
+                            <td width="30%">
+                                <div ng-hide="service.editMode">
+                                    <div class="input-control text">{{ service.serviceType }}</div>
+                                </div>
+                                <div ng-show="service.editMode" class="input-control select" data-role="input">
+                                    <select ng-model="service.serviceType" data-validate-func="required"
+                                            required>
+                                        <option
+                                                ng-selected="type.serviceType == service.serviceType"
+                                                ng-repeat="type in ctrl.serviceInfo"
+                                                value="{{type.serviceType}}">{{type.serviceType}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-actions">
+                                    <button ng-hide="service.editMode" class="button primary"
+                                            ng-click="ctrl.startEditService(service)"><span
+                                            class="mif-pencil"></span></button>
+                                    <button ng-hide="service.editMode" class="button danger"
+                                            ng-click="ctrl.deleteService($index,service)"><span
+                                            class="mif-bin"></span>
+                                    </button>
+                                    <button ng-show="service.editMode"
+                                            ng-click="ctrl.updateServiceTest(service, $index)"
+                                            class="button success"><span
+                                            class="mif-checkmark"></span></button>
+                                    <button ng-show="service.editMode" class="button warning"
+                                            ng-click="ctrl.cancelEditService(service, serviceEdit)"><span
+                                            class="mif-cancel"></span></button>
+                                </div>
+                            </td>
+                            <td>
+                                <label class="switch-original">
+                                    <input type="checkbox" checked>
+                                    <span class="check"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="panel">
+                <div class="heading">
+                    <span class="title">add a service</span>
+                </div>
+                <div class="content">
+                    <div id="ctrl.form">
+                        <form name="ctrl.formAddService" novalidate
+                              ng-submit="ctrl.formAddService.$valid && ctrl.addService(service)"
+                              data-role="validator">
+
+                            <ng-view>
+
+                                <div class="input-control  full-size" data-role="input">
+                                    <label for="inputSelect">Name:</label>
+                                    <input id="inputSelect" type="text" ng-model="ctrl.service.name"
+                                           data-validate-func="required" required>
+                                </div>
+                                <br/>
+                                <br/>
+                                <br/>
+
+                                <div class="input-control select full-size" data-role="input">
+                                    <label for="repeatSelect">Type:</label>
+                                    <select id="repeatSelect" ng-model="ctrl.service.type"
+                                            data-validate-func="required" required>
+                                        <option ng-repeat="type in ctrl.serviceInfo"
+                                                value="{{type.serviceType}}">{{type.serviceType}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </ng-view>
+                            <div class="align-right">
+                                <button class="button primary" type="submit">Add</button>
+
+                            </div>
+                            {{ctrl.service.name}} {{ctrl.service.type}}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="row">
+
+    </div>
+</div>

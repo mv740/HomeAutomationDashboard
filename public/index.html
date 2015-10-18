@@ -1,45 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en" ng-app="Dashboard">
 <head>
-    <meta charset="utf-8">
-    <title>My HTML File</title>
-    <link rel="stylesheet" href="/public/assets/css/metro.min.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <base href="/">
+
+    <link href="/public/assets/metro/metro.min.css" rel="stylesheet">
+    <link href="/public/assets/metro/metro-icons.min.css" rel="stylesheet">
+    <link href="/public/assets/metro/metro-schemes.min.css" rel="stylesheet">
+    <link href="/public/assets/metro/metro-responsive.min.css" rel="stylesheet">
+
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="/public/assets/metro/metro.js"></script>
+
     <style>
-        .red{
-            background-color: red;
+        body {
+            background: #1d1d1d;
+
         }
-        .yellow{
-            background-color: yellow;
-        }
-        .green{
-            background-color: green;
-        }
+
+
     </style>
 </head>
+
 <body>
+<div class="app-bar darcula" data-role="appbar">
+    <!-- navigation -->
+    <a class="app-bar-element branding">MyDashboard</a>
+    <span class="app-bar-divider"></span>
+    <ul class="app-bar-menu">
+        <li><a ui-sref="home">Home</a></li>
+        <li><a ui-sref="service">Service</a></li>
+        <li><a ui-sref="demo">Demo</a></li>
+        <li><a href="">Help</a></li>
+    </ul>
+    <div class="app-bar-element place-right">
+        <a class="dropdown-toggle fg-white"><span class="mif-enter"></span> Enter</a>
 
-<p>Name : <input type="text" ng-model="name"></p>
-<h1>Hello {{name}}</h1>
+        <div class="app-bar-drop-container place-right" data-role="dropdown" data-no-close="true">
+            <div class="padding20">
+                <form>
+                    <h4 class="text-light">Login to service...</h4>
 
-<div ng-controller="Service as myservices">
-    <div ng-repeat="data in myservices.tableResult">
-        <service id="{{ data.serviceName }}" type="{{data.serviceType}}"></service>
+                    <div class="input-control text">
+                        <span class="mif-user prepend-icon"></span>
+                        <input type="text" ng-model="login.username">
+                    </div>
+                    <div class="input-control text">
+                        <span class="mif-lock prepend-icon"></span>
+                        <input type="password" ng-model="login.password">
+                    </div>
+                    <label class="input-control checkbox small-check">
+                        <input type="checkbox">
+                        <span class="check"></span>
+                        <span class="caption">Remember me</span>
+                    </label>
+
+                    <div class="form-actions">
+                        <button class="button primary" ng-click="login(login.username, login.password)">Login</button>
+                        <button class="button link fg-grayLighter">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+</div>
+<!-- MAIN CONTENT -->
+<div class="container">
+    <div class="" style="margin-top: 50px;">
+        <!-- view -->
+        <div ui-view></div>
 
 
+
+    </div>
 </div>
 
+<!-- Load Js libs -->
 
 <!--
 <script type="text/javascript" src="/node_modules/angular/angular.min.js"></script>
-<script type="text/javascript" src="/node_modules/angular-route/angular-route.min.js"></script>
+<script type="text/javascript" src="/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-route.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
+
 
 <!-- client js-->
 <script type="text/javascript" src="/public/assets/js/application.js"></script>
 <script type="text/javascript" src="/public/assets/js/test.controller.js"></script>
+
 
 </body>
 </html>

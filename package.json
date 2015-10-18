@@ -28,6 +28,8 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "angular": "^1.4.7",
+    "angular-ui-router": "^0.2.15",
     "chai": "^3.3.0"
   }
 }

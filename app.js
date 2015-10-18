@@ -48,7 +48,7 @@ MongoClient.connect(url, function (err, db) {
 app.use('/public', express.static(__dirname + '/public', {
     extensions : ['html']
 }));
-app.use('/node_modules', express.static(__dirname + '/node_modules'));
+//app.use('/node_modules', express.static(__dirname + '/node_modules'));
 
 
 app.use('/', routes);

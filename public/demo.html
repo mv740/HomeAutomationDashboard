@@ -1,11 +1,11 @@
 
-<p>Name : <input type="text"   ng-model="name"></p>
-<h1>Hello {{name}}</h1>
-
-<div ng-controller="Service as myservices">
-    <div ng-repeat="data in myservices.tableResult">
-        <service id="{{ data.serviceName }}" type="{{data.serviceType}}"></service>
+<div class="grid">
+    <div ng-controller="Service as myservices">
+        <div class="row">
+            <div ng-repeat="data in myservices.viewServices">
+                <service id="{{ data.serviceName }}" type="{{data.serviceType}}"></service>
+            </div>
+        </div>
     </div>
-
 
 </div>

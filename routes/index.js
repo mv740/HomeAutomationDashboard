@@ -18,7 +18,7 @@ mongoose.connect('mongodb://localhost/NodeTutorial'); // pool of 5 connection de
 
 
 
-var service = new Schema({serviceName: String});
+var service = new Schema({serviceName: String, serviceHide: Boolean});
 var ServiceSetting = new Schema({
     "serviceType": String,
     service: [service]
@@ -157,8 +157,47 @@ router.get('/api/list/', function (request, response) {
                 var serviceType = ServiceSetting.serviceType;
                 ServiceSetting.service.forEach(function (service) {
                     //console.log(serviceType);
-                    var object = {"serviceType": serviceType, "serviceName": service.serviceName,  "editMode":false};
+                    var object;
+                    object = {
+                        "serviceType": serviceType,
+                        "serviceName": service.serviceName,
+                        "editMode": false,
+                        "serviceHide": service.serviceHide
+                    };
                     list.push(object);
+                })
+            }
+        );
+
+        return response.send(list);
+    }).lean();
+
+});
+
+router.get('/api/listView/', function (request, response) {
+
+    MemberModel.findOne({username: 'mv740'}, function (err, member) {
+
+        //console.log(member);
+        var serviceType = member.serviceType;
+
+        var list = [];
+        //console.log(member);
+        member.ServiceSetting.forEach(function (ServiceSetting) {
+                var serviceType = ServiceSetting.serviceType;
+                ServiceSetting.service.forEach(function (service) {
+                    //console.log(serviceType);
+                    if(!service.serviceHide)
+                    {
+                        var object;
+                        object = {
+                            "serviceType": serviceType,
+                            "serviceName": service.serviceName,
+                            "editMode": false,
+                            "serviceHide": service.serviceHide
+                        };
+                        list.push(object);
+                    }
                 })
             }
         );
@@ -197,8 +236,10 @@ router.post('/api/insertService', function (req, res) {
     var type = req.body.service.type;
 
     var newService = {
-        serviceName: req.body.service.name
+        serviceName: req.body.service.name,
+        serviceHide: false
     };
+    console.log(newService);
     //The $push operator appends a specified value to an array.
     MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": type},
         {$push: {"ServiceSetting.$.service": newService}},
@@ -215,12 +256,74 @@ router.post('/api/insertService', function (req, res) {
 
 router.post('/api/updateService', function (req, res) {
     console.log(req.body);
-    var type = req.body.service.type;
-    var name = req.body.service.name;
+    var newType = req.body.service.newType;
+    var newName = req.body.service.newName;
+    var currentType = req.body.service.type;
+    var currentName = req.body.service.name;
 
     var newService = {
-        serviceName: name
+        serviceName: newName
     };
+
+
+
+    //only name changed
+    if(newType === currentType)
+    {
+
+        MemberModel.findOne({ "username": 'mv740', "ServiceSetting.serviceType": currentType, "ServiceSetting.service.serviceName":currentName},
+            function (err,model) {
+                //show the type document row []
+                var foundTypeRow;
+                var foundNameRow;
+                for(var x=0; x < model.ServiceSetting.length; x++)
+                {
+                    if(model.ServiceSetting[x].serviceType == currentType)
+                    {
+                        foundTypeRow =x;
+                    }
+                }
+                for(var y=0; y < model.ServiceSetting[foundTypeRow].service.length; y++)
+                {
+                    if(model.ServiceSetting[foundTypeRow].service[y].serviceName == currentName)
+                    {
+                        foundNameRow = y;
+                    }
+                }
+
+                var name = "ServiceSetting."+foundTypeRow+".service."+foundNameRow+".serviceName";
+                var update ={};
+                update[name] = newName;
+
+                //console.log(update);
+
+                MemberModel.findOneAndUpdate({username: 'mv740'},
+                    update,
+                    function(err)
+                    {
+                        console.log("test"+err);
+                    });
+
+
+
+                //console.log("X is : "+foundTypeRow);
+                //console.log("Y is : "+foundNameRow);
+
+                //console.log(model);
+
+            });
+
+        /*
+        MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": currentType,  "ServiceSetting.service.serviceName":currentName},
+            {$set: {"ServiceSetting.$.service": [{"serviceName":"s"}]}},
+            function (err, model) {
+                console.log(err);
+                //console.log(model);
+            });
+            */
+    }
+
+
 
     //The $push operator appends a specified value to an array.
     /*
@@ -263,6 +366,62 @@ router.post('/api/updateService', function (req, res) {
 
     */
     //console.log(req.body.service.type);
+    res.end();
+});
+
+
+router.post('/api/hideService', function (req, res) {
+
+    console.log(req.body);
+    var serviceType= req.body.serviceType;
+    var serviceName= req.body.serviceName;
+    var serviceHide= req.body.serviceHide;
+
+    //only name changed
+    MemberModel.findOne({ "username": 'mv740', "ServiceSetting.serviceType": serviceType, "ServiceSetting.service.serviceName":serviceName},
+        function (err,model) {
+            //show the type document row []
+            var foundTypeRow;
+            var foundNameRow;
+            for(var x=0; x < model.ServiceSetting.length; x++)
+            {
+                if(model.ServiceSetting[x].serviceType == serviceType)
+                {
+                    foundTypeRow =x;
+                }
+            }
+            for(var y=0; y < model.ServiceSetting[foundTypeRow].service.length; y++)
+            {
+                if(model.ServiceSetting[foundTypeRow].service[y].serviceName == serviceName)
+                {
+                    foundNameRow = y;
+                }
+            }
+
+            var hide = "ServiceSetting."+foundTypeRow+".service."+foundNameRow+".serviceHide";
+            var update ={};
+            update[hide] = serviceHide;
+
+            //console.log(update);
+
+            MemberModel.findOneAndUpdate({username: 'mv740'},
+                update,
+                function(err)
+                {
+                    console.log("test"+err);
+                });
+
+
+
+            //console.log("X is : "+foundTypeRow);
+            //console.log("Y is : "+foundNameRow);
+
+            //console.log(model);
+
+        });
+
+
+
     res.end();
 });
 

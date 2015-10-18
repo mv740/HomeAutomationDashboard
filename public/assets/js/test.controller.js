@@ -15,14 +15,27 @@
             vm.formAddService = {};
             vm.serviceTypeOption = null;
 
+
+            vm.loadServiceViewTable = function()
+            {
+                $http.get('/api/listView/').
+                    then(function (response) {
+                        // this callback will be called asynchronously
+                        // when the response is available
+                        //console.log((response.data));
+                        vm.viewServices = response.data;
+                    });
+            };
+
+
             vm.loadTable = function () {
                 $http.get('/api/list/').
                     then(function (response) {
                         // this callback will be called asynchronously
                         // when the response is available
                         //console.log((response.data));
-                        vm.tableResult = response.data;
                         vm.table = response.data;
+                        vm.tableResult = response.data;
                         console.log(vm.table);
 
                         vm.status = "Loading";
@@ -41,11 +54,26 @@
 
             };
 
-
+            vm.loadServiceViewTable();
             vm.loadTable();
 
             vm.service = {};
-            vm.serviceEdit = {};
+            vm.serviceCurrent = {};
+
+
+            vm.changeHide = function(service)
+            {
+
+                console.log(service);
+                $http.post("/api/hideService", service)
+                    .success(function(data) {
+
+                    })
+                    .error(function (data) {
+                        alert(data);
+                    });
+
+            };
 
             vm.addService = function () {
                 var newService = {
@@ -74,12 +102,16 @@
                     });
             };
 
-            vm.cancelEditService = function (service,serviceEdit) {
+            vm.cancelEditService = function (service, index) {
+                service.serviceName = vm.serviceCurrent[index].serviceName;
+                service.serviceType = vm.serviceCurrent[index].serviceType;
                 service.editMode = false;
+                delete vm.serviceCurrent[index];
+
 
             };
-            vm.startEditService = function (service,serviceEdit) {
-                serviceEdit = angular.copy(service);
+            vm.startEditService = function (service, index) {
+                vm.serviceCurrent[index] = angular.copy(service);
                 service.editMode = true;
 
             };
@@ -90,11 +122,15 @@
                 alert(index);
                 var newService = {
                     service: {
-                        type: service.serviceType,
-                        name: service.serviceName
+                        newType: service.serviceType,
+                        newName: service.serviceName,
+                        type: vm.serviceCurrent[index].serviceType,
+                        name: vm.serviceCurrent[index].serviceName
 
                     }
                 };
+                delete vm.serviceCurrent[index];
+                console.log(vm.serviceCurrent);
                 $http.post("/api/updateService", newService)
                     .success(function(data) {
                         //vm.loadTable();
@@ -130,7 +166,7 @@
 
 
         }])
-        .directive('service', ['$interval', '$http', '$sce', function ($interval, $http, $sce) {
+        .directive('service', ['$interval', '$http', '$sce','$rootScope', function ($interval, $http, $sce, $rootScope) {
             return {
                 restrict: 'E',
                 scope: {
@@ -187,7 +223,13 @@
                         }
 
                     };
-                    $interval(function () {
+                    //http://stackoverflow.com/questions/24324694/interval-function-continues-when-i-change-routes?lq=1
+                    var dereg = $rootScope.$on('$locationChangeSuccess', function() {
+                        $interval.cancel(scope.stop);
+                        dereg();
+                    });
+
+                    scope.stop = $interval(function () {
                         scope.callAtInterval()
                     }, 5000);
                 },

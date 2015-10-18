@@ -235,7 +235,7 @@ router.post('/api/updateService', function (req, res) {
     //
     MemberModel.findOne({ "username": 'mv740', "ServiceSetting.serviceType": type},
         function (err,model) {
-            //show the type document row [] 
+            //show the type document row []
             var found;
             for(var x=0; x < model.ServiceSetting.length; x++)
             {

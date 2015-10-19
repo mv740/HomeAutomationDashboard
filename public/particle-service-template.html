@@ -1,9 +1,9 @@
-<div class='tile fg-white' ng-class="{'bg-green' : online, 'bg-yellow': warning, 'bg-red': offline}">
+<div class='tile fg-white' ng-class="{'bg-green' : vm.online, 'bg-yellow': vm.warning, 'bg-red': vm.offline}">
     <div class='tile-content '>
         <p class="align-center sub-alt-header">Particle Temperature </p>
         <p class="align-center header" >
-            {{temperature}}
+            {{vm.temperature}}
         </p>
-        <span class='tile-label'>{{status}}</span>
+        <span class='tile-label'>{{vm.status}}</span>
     </div>
 </div>

@@ -7,6 +7,7 @@ var express = require('express');
 var router = express.Router();
 var prtg = require('../prtg');
 var particle = require('../particle');
+var member = require('../database');
 
 
 var session = require('express-session');
@@ -209,48 +210,13 @@ router.get('/api/listView/', function (request, response) {
 
 router.get('/api/list/serviceType', function (request, response) {
 
-    MemberModel.findOne({username: 'mv740'}, function (err, member) {
-
-        //console.log(member);
-        var serviceType = member.serviceType;
-
-        var list = [];
-        //console.log(member);
-        member.ServiceSetting.forEach(function (ServiceSetting) {
-                var serviceType = ServiceSetting.serviceType;
-                var object = {
-                    "serviceType":serviceType
-                };
-                list.push(object);
-            }
-        );
-
-        return response.send(list);
-    }).lean();
+    member.getServiceTypes(MemberModel, request, response);
 
 });
 
 router.post('/api/insertService', function (req, res) {
 
-    console.log(req.body);
-    var type = req.body.service.type;
-
-    var newService = {
-        serviceName: req.body.service.name,
-        serviceHide: false
-    };
-    console.log(newService);
-    //The $push operator appends a specified value to an array.
-    MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": type},
-        {$push: {"ServiceSetting.$.service": newService}},
-        function (err, model) {
-            console.log(err);
-            //console.log(model);
-        });
-
-
-    //console.log(req.body.service.type);
-    res.end();
+    member.insertService(MemberModel, req, res);
 });
 
 
@@ -426,24 +392,7 @@ router.post('/api/hideService', function (req, res) {
 });
 
 router.post('/api/deleteService', function (req, res) {
-
-    console.log(req.body);
-    var type = req.body.service.type;
-
-    var newService = {
-        serviceName: req.body.service.name
-    };
-    //The $pull operator removes from an existing array all instances of a value or values that match a specified condition.
-    MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": type,  "ServiceSetting.service.serviceName":req.body.service.name},
-        {$pull: {"ServiceSetting.$.service": newService}},
-        function (err, model) {
-            console.log(err);
-            //console.log(model);
-        });
-
-
-    //console.log(req.body.service.type);
-    res.end();
+    member.deleteService(MemberModel, req,res);
 });
 
 // ////////////////////////////////////////////////////////////////

@@ -37,7 +37,7 @@
     }
 
                     //['$rootScope', '$state', 'AuthenticationService'];
-    //add AuthenticationService when service will be create later on 
+    //add AuthenticationService when service will be create later on
     run.$inject = ['$rootScope', '$state'];
     function run($rootScope, $state) {
 

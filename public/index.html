@@ -38,39 +38,27 @@
         <li><a href="">Help</a></li>
     </ul>
     <div class="app-bar-element place-right">
-        <a class="dropdown-toggle fg-white"><span class="mif-enter"></span> Enter</a>
-
-        <div class="app-bar-drop-container place-right" data-role="dropdown" data-no-close="true">
-            <div class="padding20">
-                <form>
-                    <h4 class="text-light">Login to service...</h4>
-
-                    <div class="input-control text">
-                        <span class="mif-user prepend-icon"></span>
-                        <input type="text" ng-model="login.username">
-                    </div>
-                    <div class="input-control text">
-                        <span class="mif-lock prepend-icon"></span>
-                        <input type="password" ng-model="login.password">
-                    </div>
-                    <label class="input-control checkbox small-check">
-                        <input type="checkbox">
-                        <span class="check"></span>
-                        <span class="caption">Remember me</span>
-                    </label>
-
-                    <div class="form-actions">
-                        <button class="button primary" ng-click="login(login.username, login.password)">Login</button>
-                        <button class="button link fg-grayLighter">Cancel</button>
-                    </div>
-                </form>
+        <div ng-show="globals.authenticated">
+            <span class="dropdown-toggle"><span class="mif-cog"></span> {{globals.user}}</span>
+            <div class="app-bar-drop-container padding10 place-right no-margin-top  fg-white" data-role="dropdown" data-no-close="true" style="width: 220px">
+                <h2 class="text-light">Quick settings</h2>
+                <ul class="unstyled-list " ng-controller="LoginController as authenticate">
+                    <li><a href="" class="fg-white1 fg-hover-yellow">Profile</a></li>
+                    <li><a href="" class="fg-white2 fg-hover-yellow">Security</a></li>
+                    <li><a class="fg-white3 fg-hover-yellow" ng-click="authenticate.logout()">Logout</a></li>
+                </ul>
             </div>
+        </div>
+        <div ng-show="!globals.authenticated">
+            <ul class="app-bar-menu">
+                <li><a ui-sref="login" >Login</a></li>
+            </ul>
         </div>
     </div>
 </div>
 <!-- MAIN CONTENT -->
-    <!-- view -->
-    <div ui-view></div>
+<!-- view -->
+<div ui-view></div>
 
 <!-- Load Js libs -->
 
@@ -80,11 +68,14 @@
 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
-
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-cookies.min.js"></script>
 
 <!-- client js-->
 <script type="text/javascript" src="/public/assets/js/Dashboard.js"></script>
 <script type="text/javascript" src="/public/assets/js/Dashboard.config.js"></script>
+<script type="text/javascript" src="/public/assets/js/session.service.js"></script>
+<script type="text/javascript" src="/public/assets/js/authentication.service.js"></script>
+<script type="text/javascript" src="/public/assets/js/Login.controller.js"></script>
 <script type="text/javascript" src="/public/assets/js/service.controller.js"></script>
 <script type="text/javascript" src="/public/assets/js/service.directive.js"></script>
 

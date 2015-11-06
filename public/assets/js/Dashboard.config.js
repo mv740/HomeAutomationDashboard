@@ -27,19 +27,26 @@
             .state('service', {
                 url: '/service',
                 templateUrl: '/public/partial-service.html',
-                authenticate: false
+                authenticate: true
             })
             .state('demo', {
                 url: '/demo',
                 templateUrl: '/public/demo.html',
-                authenticate: true
+                authenticate: false
+            })
+            .state('login', {
+                url: '/login',
+                templateUrl: '/public/partial-login.html',
+                authenticate: false
             })
     }
 
                     //['$rootScope', '$state', 'AuthenticationService'];
     //add AuthenticationService when service will be create later on
-    run.$inject = ['$rootScope', '$state'];
-    function run($rootScope, $state) {
+    run.$inject = ['$rootScope', '$state', 'AuthenticationService', '$cookieStore','$cookies'];
+    function run($rootScope, $state, AuthenticationService, $cookieStore, $cookies) {
+
+        $rootScope.globals = $cookies.getObject('globals');
 
         $rootScope.$on("$stateChangeStart",
             function (event, toState, toParams, fromState, fromParams) {

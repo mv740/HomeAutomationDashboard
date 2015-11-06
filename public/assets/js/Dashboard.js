@@ -5,7 +5,7 @@
 (function () {
     'use strict';
     angular.module('Dashboard', [
-        'ui.router'
+        'ui.router', 'ngCookies'
     ])
 })();
 

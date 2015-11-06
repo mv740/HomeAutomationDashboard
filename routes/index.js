@@ -7,40 +7,25 @@ var express = require('express');
 var router = express.Router();
 var prtg = require('../prtg');
 var particle = require('../particle');
-var member = require('../database');
-
+var database = require('../database');
 
 var session = require('express-session');
 var flash = require('connect-flash');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+
 mongoose.connect('mongodb://localhost/NodeTutorial'); // pool of 5 connection default
 
 
+var member = require('../models/member');
+var MemberModel = mongoose.model('MemberModel');
 
-var service = new Schema({serviceName: String, serviceHide: Boolean});
-var ServiceSetting = new Schema({
-    "serviceType": String,
-    service: [service]
-});
-var Member = new Schema(
-    {
-        username: String,
-        password: String,
-        ServiceSetting: [ServiceSetting]
-    }
-);
-
-
-var MemberModel = mongoose.model('MemberModel', Member, 'Member');
-Member.statics.findByUsername = function (username, cb) {
-    return this.find({username: username}, cb)
-};
+/////////
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 
 /////////////////////////////////////////////////////////////////////////////
-var passport = require('passport')
-    , LocalStrategy = require('passport-local').Strategy;
+
 
 passport.use('local1', new LocalStrategy(
     {
@@ -74,6 +59,8 @@ passport.deserializeUser(function (id, done) {
         done(err, user);
     });
 });
+
+
 router.use(flash());
 router.use(bodyParser.urlencoded({
     extended: true
@@ -91,21 +78,62 @@ router.use(passport.session());
 router.post('/login', passport.authenticate('local1'), function (req, res) {
     //passport.authenticate('local')
     console.log(req.body);
-    res.redirect('/');
+
+    var auth = {
+        'authentication' : 'success'
+    };
+    res.send(auth);
 });
 
-//todo : create cliend side service that will catch 401/200 status code
-router.post('/public/loginPage.html',
-    passport.authenticate('local1'),
-    function(req, res){
-        res.sendStatus(200);
-    }
-);
+
+
+router.post('/public/LoginPage.html', function(req, res, next){
+    passport.authenticate('local1', function(err, user, info) {
+        if (err) {
+            return next(err); // will generate a 500 error
+        }
+        // Generate a JSON response reflecting authentication status
+        if (! user) {
+            return res.status(401).send({ success : false, message : 'authentication failed' });
+        }
+        req.login(user, function(err){
+            if(err){
+                return next(err);
+            }
+            return res.send({ success : true, message : 'authentication succeeded', username: req.body.username });
+        });
+    })(req, res, next);
+});
+
 router.get('/public/loginPage.html', function (req, res) {
     console.log(req.flash('error'));
     var log = (req.flash('error'));
 
     res.sendStatus(req.flash('success', 'This is a flash message using the express-flash module.'));
+});
+// AUTHENTICATION -------------------------------------------------------------
+router.post('/login', function(req, res, next){
+    console.log(req.body);
+    passport.authenticate('local1', function(err, user, info) {
+        if (err) {
+            return next(err); // will generate a 500 error
+        }
+        // Generate a JSON response reflecting authentication status
+        if (! user) {
+            return res.status(401).send({ success : false, message : 'authentication failed' });
+        }
+        req.login(user, function(err){
+            if(err){
+                return next(err);
+            }
+            return res.send({ success : true, message : 'authentication succeeded', username: req.body.username });
+        });
+    })(req, res, next);
+});
+
+router.get('/logout', function (req, res) {
+    req.logOut();
+    res.redirect('/');
 });
 
 var isAuthenticated = function (req, res, next) {
@@ -149,11 +177,11 @@ router.get('/api/list/', function (request, response) {
 
     MemberModel.findOne({username: 'mv740'}, function (err, member) {
 
-        //console.log(member);
+        //console.log(database);
         var serviceType = member.serviceType;
 
         var list = [];
-        //console.log(member);
+        //console.log(database);
         member.ServiceSetting.forEach(function (ServiceSetting) {
                 var serviceType = ServiceSetting.serviceType;
                 ServiceSetting.service.forEach(function (service) {
@@ -179,17 +207,16 @@ router.get('/api/listView/', function (request, response) {
 
     MemberModel.findOne({username: 'mv740'}, function (err, member) {
 
-        //console.log(member);
+        //console.log(database);
         var serviceType = member.serviceType;
 
         var list = [];
-        //console.log(member);
+        //console.log(database);
         member.ServiceSetting.forEach(function (ServiceSetting) {
                 var serviceType = ServiceSetting.serviceType;
                 ServiceSetting.service.forEach(function (service) {
                     //console.log(serviceType);
-                    if(!service.serviceHide)
-                    {
+                    if (!service.serviceHide) {
                         var object;
                         object = {
                             "serviceType": serviceType,
@@ -210,13 +237,13 @@ router.get('/api/listView/', function (request, response) {
 
 router.get('/api/list/serviceType', function (request, response) {
 
-    member.getServiceTypes(MemberModel, request, response);
+    database.getServiceTypes(MemberModel, request, response);
 
 });
 
 router.post('/api/insertService', function (req, res) {
 
-    member.insertService(MemberModel, req, res);
+    database.insertService(MemberModel, req, res);
 });
 
 
@@ -232,105 +259,100 @@ router.post('/api/updateService', function (req, res) {
     };
 
 
-
     //only name changed
-    if(newType === currentType)
-    {
+    if (newType === currentType) {
 
-        MemberModel.findOne({ "username": 'mv740', "ServiceSetting.serviceType": currentType, "ServiceSetting.service.serviceName":currentName},
-            function (err,model) {
+        MemberModel.findOne({
+                "username": 'mv740',
+                "ServiceSetting.serviceType": currentType,
+                "ServiceSetting.service.serviceName": currentName
+            },
+            function (err, model) {
                 //show the type document row []
                 var foundTypeRow;
                 var foundNameRow;
-                for(var x=0; x < model.ServiceSetting.length; x++)
-                {
-                    if(model.ServiceSetting[x].serviceType == currentType)
-                    {
-                        foundTypeRow =x;
+                for (var x = 0; x < model.ServiceSetting.length; x++) {
+                    if (model.ServiceSetting[x].serviceType == currentType) {
+                        foundTypeRow = x;
                     }
                 }
-                for(var y=0; y < model.ServiceSetting[foundTypeRow].service.length; y++)
-                {
-                    if(model.ServiceSetting[foundTypeRow].service[y].serviceName == currentName)
-                    {
+                for (var y = 0; y < model.ServiceSetting[foundTypeRow].service.length; y++) {
+                    if (model.ServiceSetting[foundTypeRow].service[y].serviceName == currentName) {
                         foundNameRow = y;
                     }
                 }
 
-                var name = "ServiceSetting."+foundTypeRow+".service."+foundNameRow+".serviceName";
-                var update ={};
+                var name = "ServiceSetting." + foundTypeRow + ".service." + foundNameRow + ".serviceName";
+                var update = {};
                 update[name] = newName;
 
                 //console.log(update);
 
                 MemberModel.findOneAndUpdate({username: 'mv740'},
                     update,
-                    function(err)
-                    {
-                        console.log("test"+err);
+                    function (err) {
+                        console.log("test" + err);
                     });
-
 
 
                 //console.log("X is : "+foundTypeRow);
                 //console.log("Y is : "+foundNameRow);
 
-                //console.log(model);
+                //console.log(models);
 
             });
 
         /*
-        MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": currentType,  "ServiceSetting.service.serviceName":currentName},
-            {$set: {"ServiceSetting.$.service": [{"serviceName":"s"}]}},
-            function (err, model) {
-                console.log(err);
-                //console.log(model);
-            });
-            */
+         MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": currentType,  "ServiceSetting.service.serviceName":currentName},
+         {$set: {"ServiceSetting.$.service": [{"serviceName":"s"}]}},
+         function (err, models) {
+         console.log(err);
+         //console.log(models);
+         });
+         */
     }
-
 
 
     //The $push operator appends a specified value to an array.
     /*
-    //Todo Since we can't do double dot notation, we will to query to find the row id of settingSetting[?]
-    MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": type,  "ServiceSetting.service.serviceName":req.body.service.name},
-        {$set: {"ServiceSetting.$.service": [{"serviceName":"s"}]}},
-        function (err, model) {
-            console.log(err);
-            //console.log(model);
-        });
+     //Todo Since we can't do double dot notation, we will to query to find the row id of settingSetting[?]
+     MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": type,  "ServiceSetting.service.serviceName":req.body.service.name},
+     {$set: {"ServiceSetting.$.service": [{"serviceName":"s"}]}},
+     function (err, models) {
+     console.log(err);
+     //console.log(models);
+     });
 
-    //
-    MemberModel.findOne({ "username": 'mv740', "ServiceSetting.serviceType": type},
-        function (err,model) {
-            //show the type document row []
-            var found;
-            for(var x=0; x < model.ServiceSetting.length; x++)
-            {
-                if(model.ServiceSetting[x].serviceType == type)
-                    found =x;
-            }
-
-
-            var test = '{\'ServiceSetting.'+found+'.service.0.serviceName\': \'ddfd\'}';
-            console.log(test);
-            MemberModel.findOneAndUpdate({username: 'mv740'},
-                {"ServiceSetting.1.service.0.serviceName": "mil"},
-                function(err)
-                {
-                    console.log("test"+err);
-                });
+     //
+     MemberModel.findOne({ "username": 'mv740', "ServiceSetting.serviceType": type},
+     function (err,models) {
+     //show the type document row []
+     var found;
+     for(var x=0; x < models.ServiceSetting.length; x++)
+     {
+     if(models.ServiceSetting[x].serviceType == type)
+     found =x;
+     }
 
 
+     var test = '{\'ServiceSetting.'+found+'.service.0.serviceName\': \'ddfd\'}';
+     console.log(test);
+     MemberModel.findOneAndUpdate({username: 'mv740'},
+     {"ServiceSetting.1.service.0.serviceName": "mil"},
+     function(err)
+     {
+     console.log("test"+err);
+     });
 
-            console.log("X is : "+found);
 
-            //console.log(model);
-            console.log("error: "+err);
-        });
 
-    */
+     console.log("X is : "+found);
+
+     //console.log(models);
+     console.log("error: "+err);
+     });
+
+     */
     //console.log(req.body.service.type);
     res.end();
 });
@@ -339,60 +361,57 @@ router.post('/api/updateService', function (req, res) {
 router.post('/api/hideService', function (req, res) {
 
     console.log(req.body);
-    var serviceType= req.body.serviceType;
-    var serviceName= req.body.serviceName;
-    var serviceHide= req.body.serviceHide;
+    var serviceType = req.body.serviceType;
+    var serviceName = req.body.serviceName;
+    var serviceHide = req.body.serviceHide;
 
     //only name changed
-    MemberModel.findOne({ "username": 'mv740', "ServiceSetting.serviceType": serviceType, "ServiceSetting.service.serviceName":serviceName},
-        function (err,model) {
+    MemberModel.findOne({
+            "username": 'mv740',
+            "ServiceSetting.serviceType": serviceType,
+            "ServiceSetting.service.serviceName": serviceName
+        },
+        function (err, model) {
             //show the type document row []
             var foundTypeRow;
             var foundNameRow;
-            for(var x=0; x < model.ServiceSetting.length; x++)
-            {
-                if(model.ServiceSetting[x].serviceType == serviceType)
-                {
-                    foundTypeRow =x;
+            for (var x = 0; x < model.ServiceSetting.length; x++) {
+                if (model.ServiceSetting[x].serviceType == serviceType) {
+                    foundTypeRow = x;
                 }
             }
-            for(var y=0; y < model.ServiceSetting[foundTypeRow].service.length; y++)
-            {
-                if(model.ServiceSetting[foundTypeRow].service[y].serviceName == serviceName)
-                {
+            for (var y = 0; y < model.ServiceSetting[foundTypeRow].service.length; y++) {
+                if (model.ServiceSetting[foundTypeRow].service[y].serviceName == serviceName) {
                     foundNameRow = y;
                 }
             }
 
-            var hide = "ServiceSetting."+foundTypeRow+".service."+foundNameRow+".serviceHide";
-            var update ={};
+            var hide = "ServiceSetting." + foundTypeRow + ".service." + foundNameRow + ".serviceHide";
+            var update = {};
             update[hide] = serviceHide;
 
             //console.log(update);
 
             MemberModel.findOneAndUpdate({username: 'mv740'},
                 update,
-                function(err)
-                {
-                    console.log("test"+err);
+                function (err) {
+                    console.log("test" + err);
                 });
-
 
 
             //console.log("X is : "+foundTypeRow);
             //console.log("Y is : "+foundNameRow);
 
-            //console.log(model);
+            //console.log(models);
 
         });
-
 
 
     res.end();
 });
 
 router.post('/api/deleteService', function (req, res) {
-    member.deleteService(MemberModel, req,res);
+    database.deleteService(MemberModel, req, res);
 });
 
 // ////////////////////////////////////////////////////////////////
@@ -508,7 +527,7 @@ router.get('/api/particle/temperature/:tag', function (request, response) {
 });
 
 //if url query doesn't match any previous router.get then it will go here and redirect to main page
-router.get('*', function(req, res){
+router.get('*', function (req, res) {
     res.redirect('/')
 });
 module.exports = router;

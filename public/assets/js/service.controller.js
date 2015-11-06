@@ -12,7 +12,7 @@
     Service.$inject = ['$http', '$timeout'];
 
     function Service($http, $timeout) {
-        //vm = view model
+        //vm = view models
         var vm = this;
 
         vm.table = [];

@@ -9,7 +9,7 @@ module.exports = {
         'password': 'NodeTutorial'
     },
     'database': 'NodeTutorial',
-    'member_table': 'member',
+    'member_table': 'database',
     'service_table' : 'service',
     'serviceSetting_table' : 'serviceSetting'
 };

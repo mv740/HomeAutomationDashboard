@@ -12,7 +12,7 @@ exports.getServiceTypes = function (MemberModel, request, response) {
     MemberModel.findOne({username: 'mv740'}, function (err, member) {
 
         var list = [];
-        //console.log(member);
+        //console.log(database);
         member.ServiceSetting.forEach(function (ServiceSetting) {
                 var serviceType = ServiceSetting.serviceType;
                 var object = {
@@ -41,7 +41,7 @@ exports.insertService = function (MemberModel, req, res) {
         {$push: {"ServiceSetting.$.service": newService}},
         function (err, model) {
             console.log(err);
-            //console.log(model);
+            //console.log(models);
         });
     res.end();
 };
@@ -62,10 +62,11 @@ exports.deleteService = function (MemberModel, req, res) {
         {$pull: {"ServiceSetting.$.service": newService}},
         function (err, model) {
             console.log(err);
-            //console.log(model);
+            //console.log(models);
         });
 
 
     //console.log(req.body.service.type);
     res.end();
 };
+

@@ -70,3 +70,69 @@ exports.deleteService = function (MemberModel, req, res) {
     res.end();
 };
 
+exports.hideServices = function (MemberModel, req, res) {
+    var serviceType = req.body.serviceType;
+    var serviceName = req.body.serviceName;
+    var serviceHide = req.body.serviceHide;
+
+    //only name changed
+    MemberModel.findOne({
+            "username": 'mv740',
+            "ServiceSetting.serviceType": serviceType,
+            "ServiceSetting.service.serviceName": serviceName
+        },
+        function (err, model) {
+            //show the type document row []
+            var foundTypeRow;
+            var foundNameRow;
+            for (var x = 0; x < model.ServiceSetting.length; x++) {
+                if (model.ServiceSetting[x].serviceType == serviceType) {
+                    foundTypeRow = x;
+                }
+            }
+            for (var y = 0; y < model.ServiceSetting[foundTypeRow].service.length; y++) {
+                if (model.ServiceSetting[foundTypeRow].service[y].serviceName == serviceName) {
+                    foundNameRow = y;
+                }
+            }
+
+            var hide = "ServiceSetting." + foundTypeRow + ".service." + foundNameRow + ".serviceHide";
+            var update = {};
+            update[hide] = serviceHide;
+
+            //console.log(update);
+
+            MemberModel.findOneAndUpdate({username: 'mv740'},
+                update,
+                function (err) {
+                    console.log("test" + err);
+                });
+        });
+
+    res.end();
+};
+
+exports.createAccount = function (MemberModel, req, res) {
+    var username = req.body.username;
+    var pass = req.body.password;
+
+    MemberModel.findOne({'username': username}, function (error, result) {
+        console.log(result);
+        if (result === null) {
+            var newMember = new MemberModel(
+                {
+                    "username": username,
+                    "password": pass
+                }
+            );
+            newMember.save(function (error, newAccount) {
+                if (error) {
+                    return console.error(error);
+                }
+            });
+            res.send({'msg': 'created user ' + username})
+        } else
+            res.send({'error': 'this user already exist!'})
+
+    })
+};

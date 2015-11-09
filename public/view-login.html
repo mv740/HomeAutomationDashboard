@@ -1,29 +1,30 @@
 <div class="margin20">
-    <div style="width: 25rem; background: white; margin-left: auto; margin-right: auto">
+    <div style="width: 20rem; background: white; margin-left: auto; margin-right: auto">
         <div class="login-form padding20 block-shadow" ng-controller="LoginController as authenticate">
-            <form ng-submit="authenticate.submit(account)">
+
+            <form name="authenticate.form" novalidate ng-submit="authenticate.login(account)" >
                 <h1 class="text-light">Login to service</h1>
                 <hr class="thin"/>
                 <br />
                 <div class="input-control text full-size" data-role="input">
-                    <label for="user_login">User email:</label>
-                    <input type="text" id="user_login" ng-model="account.username">
+                    <span class="mif-user prepend-icon"></span>
+                    <input type="text" id="user_login" placeholder="Username" name="user_login" ng-model="account.username"  required>
                     <button class="button helper-button clear"><span class="mif-cross"></span></button>
                 </div>
                 <br />
                 <br />
                 <div class="input-control password full-size" data-role="input">
-                    <label for="user_password">User password:</label>
-                    <input type="password" ng-model="account.password" id="user_password">
+                    <span class="mif-lock prepend-icon"></span>
+                    <input type="password" ng-model="account.password" placeholder="Password" name=user_password" id="user_password" required>
                     <button class="button helper-button reveal"><span class="mif-looks"></span></button>
                 </div>
                 <br />
                 <br />
                 <div class="form-actions">
-                    <button type="submit" class="button primary" >Login to...</button>
-                    <button type="reset" class="button link">Cancel</button>
+                        <button type="submit" class="button primary" ng-disabled="!authenticate.form.$valid"   >Login</button>
                 </div>
             </form>
         </div>
+        <button class="button link full-size" ui-sref="register" style="text-align: center">Create Account</button>
     </div>
 </div>

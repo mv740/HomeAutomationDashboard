@@ -80,27 +80,26 @@ router.post('/login', passport.authenticate('local1'), function (req, res) {
     console.log(req.body);
 
     var auth = {
-        'authentication' : 'success'
+        'authentication': 'success'
     };
     res.send(auth);
 });
 
 
-
-router.post('/public/LoginPage.html', function(req, res, next){
-    passport.authenticate('local1', function(err, user, info) {
+router.post('/public/LoginPage.html', function (req, res, next) {
+    passport.authenticate('local1', function (err, user, info) {
         if (err) {
             return next(err); // will generate a 500 error
         }
         // Generate a JSON response reflecting authentication status
-        if (! user) {
-            return res.status(401).send({ success : false, message : 'authentication failed' });
+        if (!user) {
+            return res.status(401).send({success: false, message: 'authentication failed'});
         }
-        req.login(user, function(err){
-            if(err){
+        req.login(user, function (err) {
+            if (err) {
                 return next(err);
             }
-            return res.send({ success : true, message : 'authentication succeeded', username: req.body.username });
+            return res.send({success: true, message: 'authentication succeeded', username: req.body.username});
         });
     })(req, res, next);
 });
@@ -112,21 +111,21 @@ router.get('/public/loginPage.html', function (req, res) {
     res.sendStatus(req.flash('success', 'This is a flash message using the express-flash module.'));
 });
 // AUTHENTICATION -------------------------------------------------------------
-router.post('/login', function(req, res, next){
+router.post('/login', function (req, res, next) {
     console.log(req.body);
-    passport.authenticate('local1', function(err, user, info) {
+    passport.authenticate('local1', function (err, user, info) {
         if (err) {
             return next(err); // will generate a 500 error
         }
         // Generate a JSON response reflecting authentication status
-        if (! user) {
-            return res.status(401).send({ success : false, message : 'authentication failed' });
+        if (!user) {
+            return res.status(401).send({success: false, message: 'authentication failed'});
         }
-        req.login(user, function(err){
-            if(err){
+        req.login(user, function (err) {
+            if (err) {
                 return next(err);
             }
-            return res.send({ success : true, message : 'authentication succeeded', username: req.body.username });
+            return res.send({success: true, message: 'authentication succeeded', username: req.body.username});
         });
     })(req, res, next);
 });
@@ -236,14 +235,15 @@ router.get('/api/listView/', function (request, response) {
 });
 
 router.get('/api/list/serviceType', function (request, response) {
-
     database.getServiceTypes(MemberModel, request, response);
-
 });
 
 router.post('/api/insertService', function (req, res) {
-
     database.insertService(MemberModel, req, res);
+});
+
+router.post('/api/createAccount', function (req, res) {
+    database.createAccount(MemberModel, req, res);
 });
 
 
@@ -359,55 +359,7 @@ router.post('/api/updateService', function (req, res) {
 
 
 router.post('/api/hideService', function (req, res) {
-
-    console.log(req.body);
-    var serviceType = req.body.serviceType;
-    var serviceName = req.body.serviceName;
-    var serviceHide = req.body.serviceHide;
-
-    //only name changed
-    MemberModel.findOne({
-            "username": 'mv740',
-            "ServiceSetting.serviceType": serviceType,
-            "ServiceSetting.service.serviceName": serviceName
-        },
-        function (err, model) {
-            //show the type document row []
-            var foundTypeRow;
-            var foundNameRow;
-            for (var x = 0; x < model.ServiceSetting.length; x++) {
-                if (model.ServiceSetting[x].serviceType == serviceType) {
-                    foundTypeRow = x;
-                }
-            }
-            for (var y = 0; y < model.ServiceSetting[foundTypeRow].service.length; y++) {
-                if (model.ServiceSetting[foundTypeRow].service[y].serviceName == serviceName) {
-                    foundNameRow = y;
-                }
-            }
-
-            var hide = "ServiceSetting." + foundTypeRow + ".service." + foundNameRow + ".serviceHide";
-            var update = {};
-            update[hide] = serviceHide;
-
-            //console.log(update);
-
-            MemberModel.findOneAndUpdate({username: 'mv740'},
-                update,
-                function (err) {
-                    console.log("test" + err);
-                });
-
-
-            //console.log("X is : "+foundTypeRow);
-            //console.log("Y is : "+foundNameRow);
-
-            //console.log(models);
-
-        });
-
-
-    res.end();
+    database.hideServices(MemberModel, req, res);
 });
 
 router.post('/api/deleteService', function (req, res) {
@@ -509,21 +461,15 @@ router.get('/api/graph/:id/:hide?', function (request, response) {
 // particle
 router.get('/api/particle/:tag', function (request, response) {
     var tag = request.params.tag;
-
     particle.getDevice(tag, function (value) {
         response.send(value);
     });
-
-
 });
 router.get('/api/particle/temperature/:tag', function (request, response) {
     var tag = request.params.tag;
-
     particle.getTemperature(tag, function (value) {
         response.send(value);
     });
-
-
 });
 
 //if url query doesn't match any previous router.get then it will go here and redirect to main page

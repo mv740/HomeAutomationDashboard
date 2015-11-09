@@ -47,8 +47,11 @@
 
 
         authService.isAuthenticated = function () {
-            if ($rootScope.globals.authenticated != undefined)
-                return $rootScope.globals.authenticated;
+            var globalsExist = $cookies.getObject('globals');
+            if(globalsExist)
+            {
+                return globalsExist.authenticated;
+            }
             return false;
         };
 

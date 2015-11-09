@@ -17,19 +17,11 @@
         //http://jasonwatmore.com/post/2014/05/26/AngularJS-Basic-HTTP-Authentication-Example.aspx
 
         vm.login = function (data) {
-            //console.log("test");
-            //console.log(data);
-            AuthenticationService.login(data);
-
-        };
-
-        vm.submit = function (data) {
             AuthenticationService.login(data);
         };
 
         vm.logout = function()
         {
-            console.log("TEST");
             AuthenticationService.logout();
         }
 

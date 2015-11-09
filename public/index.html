@@ -40,9 +40,9 @@
     <div class="app-bar-element place-right">
         <div ng-show="globals.authenticated">
             <span class="dropdown-toggle"><span class="mif-cog"></span> {{globals.user}}</span>
-            <div class="app-bar-drop-container padding10 place-right no-margin-top  fg-white" data-role="dropdown" data-no-close="true" style="width: 220px">
+            <div class="app-bar-drop-container padding10 place-right no-margin-top  block-shadow" data-role="dropdown" data-no-close="true" style="width: 220px">
                 <h2 class="text-light">Quick settings</h2>
-                <ul class="unstyled-list " ng-controller="LoginController as authenticate">
+                <ul class="unstyled-list fg-dark" ng-controller="LoginController as authenticate">
                     <li><a href="" class="fg-white1 fg-hover-yellow">Profile</a></li>
                     <li><a href="" class="fg-white2 fg-hover-yellow">Security</a></li>
                     <li><a class="fg-white3 fg-hover-yellow" ng-click="authenticate.logout()">Logout</a></li>

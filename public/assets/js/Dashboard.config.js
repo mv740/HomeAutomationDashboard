@@ -20,23 +20,28 @@
             //Home State
             .state('home', {
                 url: '/home',
-                templateUrl: '/public/partial-home.html',
+                templateUrl: '/public/view-home.html',
                 authenticate: false
             })
             // Service State
             .state('service', {
                 url: '/service',
-                templateUrl: '/public/partial-service.html',
+                templateUrl: '/public/view-service.html',
                 authenticate: true
             })
             .state('demo', {
                 url: '/demo',
                 templateUrl: '/public/demo.html',
-                authenticate: false
+                authenticate: true
             })
             .state('login', {
                 url: '/login',
-                templateUrl: '/public/partial-login.html',
+                templateUrl: '/public/view-login.html',
+                authenticate: false
+            })
+            .state('register', {
+                url: '/register',
+                templateUrl: '/public/view-register.html',
                 authenticate: false
             })
     }

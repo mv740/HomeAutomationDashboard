@@ -46,6 +46,96 @@ exports.insertService = function (MemberModel, req, res) {
     res.end();
 };
 
+exports.updateService = function (MemberModel, req, res) {
+    var newType = req.body.service.newType;
+    var newServiceName = req.body.service.newName;
+    var currentType = req.body.service.type;
+    var currentServiceName = req.body.service.name;
+
+    // type not changed, name changed
+    if (newServiceName != currentServiceName && newType === currentType) {
+
+        var query = {
+
+            "username": 'mv740',
+            "ServiceSetting.serviceType": currentType,
+            "ServiceSetting.service.serviceName": currentServiceName
+
+        };
+        MemberModel.findOne(query,
+            function (err, model) {
+                //show the type document row []
+                var foundTypeRow;
+                var foundNameRow;
+                for (var x = 0; x < model.ServiceSetting.length; x++) {
+                    if (model.ServiceSetting[x].serviceType == currentType) {
+                        foundTypeRow = x;
+                    }
+                }
+                for (var y = 0; y < model.ServiceSetting[foundTypeRow].service.length; y++) {
+                    if (model.ServiceSetting[foundTypeRow].service[y].serviceName == currentServiceName) {
+                        foundNameRow = y;
+                    }
+                }
+
+                var nameQuery = "ServiceSetting." + foundTypeRow + ".service." + foundNameRow + ".serviceName";
+
+                var update = {};
+                update[nameQuery] = newServiceName;
+
+                query = {};
+                query['username'] = 'mv740';
+                query[nameQuery] = currentServiceName;
+
+                MemberModel.findOneAndUpdate(query,
+                    {$set: update},
+                    function (err, doc) {
+                        console.log("errorHERE" + err);
+                        res.status(500);//server error
+                        res.end()
+                    });
+
+            });
+        res.end();
+
+    } else if (currentType != newType)
+    {
+        //delete old one
+        var currentService = {
+            serviceName: currentServiceName
+        };
+        //The $pull operator removes from an existing array all instances of a value or values that match a specified condition.
+        MemberModel.findOneAndUpdate({
+                username: 'mv740',
+                "ServiceSetting.serviceType": currentType,
+                "ServiceSetting.service.serviceName": req.body.service.name
+            },
+            {$pull: {"ServiceSetting.$.service": currentService}},
+            function (err, model) {
+                console.log(err);
+                //console.log(models);
+            });
+
+        //insert new one with new type and check if we need to update the service name
+        var newService = {
+            serviceName: (newServiceName == currentServiceName)?currentServiceName:newServiceName,
+            serviceHide: false
+        };
+        //The $push operator appends a specified value to an array.
+        MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": newType},
+            {$push: {"ServiceSetting.$.service": newService}},
+            function (err, model) {
+                console.log(err);
+
+            });
+        res.end();
+    }else
+    {
+        //nothing to change
+        res.end()
+    }
+};
+
 exports.deleteService = function (MemberModel, req, res) {
     console.log(req.body);
     var type = req.body.service.type;
@@ -136,3 +226,4 @@ exports.createAccount = function (MemberModel, req, res) {
 
     })
 };
+

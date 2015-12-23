@@ -122,7 +122,7 @@
         function updateServiceTest(service, index) {
             //console.log("update");
             console.log(service);
-            alert(index);
+            //alert(index);
             var newService = {
                 service: {
                     newType: service.serviceType,
@@ -132,7 +132,6 @@
 
                 }
             };
-            delete vm.serviceCurrent[index];
             console.log(vm.serviceCurrent);
             $http.post("/api/updateService", newService)
                 .success(function (data) {
@@ -144,7 +143,7 @@
                     alert(data);
                 });
 
-
+            delete vm.serviceCurrent[index];
         }
         function deleteService(index, service) {
             var newService = {

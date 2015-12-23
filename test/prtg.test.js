@@ -15,7 +15,7 @@ describe('API-getSensorDetails', function () {
         });
     });
     it('it should return a error Object when sensor isn\'t found', function (done) {
-        prtg.getSensorDetails("3", function(reply){
+        prtg.getSensorDetails(3, function(reply){
             reply.should.have.property('error');
             done();
         });
@@ -29,7 +29,7 @@ describe('API-getLoggedUsers', function () {
         });
     });
     it('it should return a error Object when sensor isn\'t found', function (done) {
-        prtg.getSensorDetails("3", function(reply){
+        prtg.getSensorDetails(3, function(reply){
             reply.should.have.property('error');
             done();
         });
@@ -43,7 +43,7 @@ describe('API-getSystemStatus', function () {
         });
     });
     it('it should return a error Object when sensor isn\'t found', function (done) {
-        prtg.getSensorDetails("3", function(reply){
+        prtg.getSensorDetails(3, function(reply){
             reply.should.have.property('error');
             done();
         });
@@ -57,7 +57,7 @@ describe('API-getDevice', function () {
         });
     });
     it('it should return a error Object when sensor isn\'t found', function (done) {
-        prtg.getSensorDetails("3", function(reply){
+        prtg.getSensorDetails(3, function(reply){
             reply.should.have.property('error');
             done();
         });
@@ -71,7 +71,7 @@ describe('API-getMemory', function () {
         });
     });
     it('it should return a error Object when sensor isn\'t found', function (done) {
-        prtg.getSensorDetails("3", function(reply){
+        prtg.getSensorDetails(3, function(reply){
             reply.should.have.property('error');
             done();
         });
@@ -85,7 +85,7 @@ describe('API-getCPU', function () {
         });
     });
     it('it should return a error Object when sensor isn\'t found', function (done) {
-        prtg.getSensorDetails("3", function(reply){
+        prtg.getSensorDetails(3, function(reply){
             reply.should.have.property('error');
             done();
         });
@@ -99,7 +99,7 @@ describe('API-getDisk', function () {
         });
     });
     it('it should return a error Object when sensor isn\'t found', function (done) {
-        prtg.getSensorDetails("3", function(reply){
+        prtg.getSensorDetails(3, function(reply){
             reply.should.have.property('error');
             done();
         });

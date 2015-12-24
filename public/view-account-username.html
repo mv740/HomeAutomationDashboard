@@ -1,0 +1,14 @@
+<form name="authenticate.form" novalidate ng-submit="authenticate.submit(account)" >
+    <br/>
+    <div class="input-control text full-size" data-role="input">
+        <span class="mif-user prepend-icon"></span>
+        <input type="text" id="user_login" name="user_login"  ng-model="ctrl.account.username" required>
+        <button class="button helper-button clear"><span class="mif-cross"></span></button>
+    </div>
+    <br/>
+    <br/>
+
+    <div class="form-actions">
+        <button type="submit" class="button primary" ng-disabled="!authenticate.form.$valid">Update</button>
+    </div>
+</form>

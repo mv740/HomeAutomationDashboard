@@ -39,20 +39,31 @@
 
         };
         authService.logout = function () {
-            $cookies.remove('globals');
-            $cookies.remove('connect-sid'); //cookie api
-            delete $rootScope.globals;
-            $location.path('/home')
+
+            $http.get('/logout').success(function(info, status)
+            {
+                console.log(status);
+                $cookies.remove("globals");
+                delete $rootScope.globals;
+                $cookies.remove("connect.sid"); //cookie api
+                $location.path('/home')
+            }).error(function(info, status){
+               console.log(status);
+            });
+
         };
 
 
         authService.isAuthenticated = function () {
             var globalsExist = $cookies.getObject('globals');
-            if(globalsExist)
-            {
+            if (globalsExist) {
                 return globalsExist.authenticated;
             }
             return false;
+        };
+
+        authService.getUserName = function () {
+            return $rootScope.globals.user;
         };
 
         return authService;

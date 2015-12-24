@@ -4,12 +4,8 @@
  */
 
 
-
-//todo each method must get username name from cookie
-//here we use mv740 for now
-
 exports.getServiceTypes = function (MemberModel, request, response) {
-    MemberModel.findOne({username: 'mv740'}, function (err, member) {
+    MemberModel.findOne({username: request.user.username}, function (err, member) {
 
         var list = [];
         //console.log(database);
@@ -31,13 +27,14 @@ exports.insertService = function (MemberModel, req, res) {
 
     console.log(req.body);
     var type = req.body.service.type;
+    var currentUser = req.user.username;
 
     var newService = {
         serviceName: req.body.service.name,
         serviceHide: false
     };
     //The $push operator appends a specified value to an array.
-    MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": type},
+    MemberModel.findOneAndUpdate({username: currentUser, "ServiceSetting.serviceType": type},
         {$push: {"ServiceSetting.$.service": newService}},
         function (err, model) {
             console.log(err);
@@ -51,13 +48,14 @@ exports.updateService = function (MemberModel, req, res) {
     var newServiceName = req.body.service.newName;
     var currentType = req.body.service.type;
     var currentServiceName = req.body.service.name;
+    var currentUser = req.user.username;
 
     // type not changed, name changed
     if (newServiceName != currentServiceName && newType === currentType) {
 
         var query = {
 
-            "username": 'mv740',
+            "username": currentUser,
             "ServiceSetting.serviceType": currentType,
             "ServiceSetting.service.serviceName": currentServiceName
 
@@ -79,20 +77,17 @@ exports.updateService = function (MemberModel, req, res) {
                 }
 
                 var nameQuery = "ServiceSetting." + foundTypeRow + ".service." + foundNameRow + ".serviceName";
-
                 var update = {};
                 update[nameQuery] = newServiceName;
 
-                query = {};
-                query['username'] = 'mv740';
-                query[nameQuery] = currentServiceName;
-
-                MemberModel.findOneAndUpdate(query,
-                    {$set: update},
-                    function (err, doc) {
-                        console.log("errorHERE" + err);
-                        res.status(500);//server error
-                        res.end()
+                MemberModel.findOneAndUpdate({username: currentUser},
+                    update,
+                    function (err) {
+                        console.log("updateService used");
+                        if(err !=null)
+                        {
+                            console.log("updateService Error : " +err)
+                        }
                     });
 
             });
@@ -106,7 +101,7 @@ exports.updateService = function (MemberModel, req, res) {
         };
         //The $pull operator removes from an existing array all instances of a value or values that match a specified condition.
         MemberModel.findOneAndUpdate({
-                username: 'mv740',
+                username: currentUser,
                 "ServiceSetting.serviceType": currentType,
                 "ServiceSetting.service.serviceName": req.body.service.name
             },
@@ -122,10 +117,14 @@ exports.updateService = function (MemberModel, req, res) {
             serviceHide: false
         };
         //The $push operator appends a specified value to an array.
-        MemberModel.findOneAndUpdate({username: 'mv740', "ServiceSetting.serviceType": newType},
+        MemberModel.findOneAndUpdate({username: currentUser, "ServiceSetting.serviceType": newType},
             {$push: {"ServiceSetting.$.service": newService}},
             function (err, model) {
-                console.log(err);
+                console.log("updateService used");
+                if(err !=null)
+                {
+                    console.log("updateService Error : " +err)
+                }
 
             });
         res.end();
@@ -139,13 +138,14 @@ exports.updateService = function (MemberModel, req, res) {
 exports.deleteService = function (MemberModel, req, res) {
     console.log(req.body);
     var type = req.body.service.type;
+    var currentUser = req.user.username;
 
     var newService = {
         serviceName: req.body.service.name
     };
     //The $pull operator removes from an existing array all instances of a value or values that match a specified condition.
     MemberModel.findOneAndUpdate({
-            username: 'mv740',
+            username: currentUser,
             "ServiceSetting.serviceType": type,
             "ServiceSetting.service.serviceName": req.body.service.name
         },
@@ -164,10 +164,11 @@ exports.hideServices = function (MemberModel, req, res) {
     var serviceType = req.body.serviceType;
     var serviceName = req.body.serviceName;
     var serviceHide = req.body.serviceHide;
+    var currentUser = req.user.username;
 
     //only name changed
     MemberModel.findOne({
-            "username": 'mv740',
+            "username": currentUser,
             "ServiceSetting.serviceType": serviceType,
             "ServiceSetting.service.serviceName": serviceName
         },
@@ -190,12 +191,14 @@ exports.hideServices = function (MemberModel, req, res) {
             var update = {};
             update[hide] = serviceHide;
 
-            //console.log(update);
-
-            MemberModel.findOneAndUpdate({username: 'mv740'},
+            MemberModel.findOneAndUpdate({username: currentUser},
                 update,
                 function (err) {
-                    console.log("test" + err);
+                    console.log("hideServices used");
+                    if(err !=null)
+                    {
+                        console.log("hideServices Error : " +err)
+                    }
                 });
         });
 

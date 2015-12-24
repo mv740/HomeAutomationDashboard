@@ -1,0 +1,38 @@
+<div class="margin20">
+    <div style="width: 30rem; background: white; margin-left: auto; margin-right: auto">
+        <!--<div class="tabcontrol" data-role="tabcontrol" data-on-tab-click="tab_click"-->
+        <!--data-on-tab-change="tab_change">-->
+        <!--<ul class="tabs">-->
+        <!--<li><a href="#frame_1_1">Tab 1</a></li>-->
+        <!--<li><a href="#frame_1_2">Tab 2</a></li>-->
+        <!--<li class="disabled"><a href="">Tab 3</a></li>-->
+        <!--</ul>-->
+        <!--<div class="frames bg-grayLight">-->
+        <!--<div class="frame" id="frame_1_1">1</div>-->
+        <!--<div class="frame" id="frame_1_2">2</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <div class=" padding20 ">
+            <div ng-controller="Account as ctrl">
+                <h1 class="text-light">Account Setting</h1>
+                <hr class="thin bg-blue"/>
+                <br />
+                <div class="tabcontrol">
+                    <ul class="tabs">
+                        <li ng-repeat="item in ctrl.items" ng-class="{'active':(ctrl.activePanel==item.url)}">
+                            <a ng-click="ctrl.showPanel(item.url)">{{item.title}}</a>
+                        </li>
+                    </ul>
+                    <div class="frames">
+                        <div ng-repeat="item in ctrl.items" class="frame bg-white" ng-show="(ctrl.activePanel == item.url)">
+                            <div ng-include="item.url"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>

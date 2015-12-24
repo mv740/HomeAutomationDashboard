@@ -69,8 +69,6 @@
 
         }
         function changeHide(service) {
-
-            console.log(service);
             $http.post("/api/hideService", service)
                 .success(function (data) {
 
@@ -81,6 +79,7 @@
 
         }
         function addService() {
+
             var newService = {
                 service: {
                     type: vm.service.type,
@@ -96,7 +95,6 @@
             $http.post("/api/insertService", newService)
                 .success(function (data) {
                     vm.table.push(newServiceView);
-                    //vm.loadTable();
                     vm.formAddService.$setPristine();
                     vm.formAddService.$setUntouched();
                     vm.service = {};
@@ -120,9 +118,6 @@
 
         }
         function updateServiceTest(service, index) {
-            //console.log("update");
-            console.log(service);
-            //alert(index);
             var newService = {
                 service: {
                     newType: service.serviceType,
@@ -132,11 +127,8 @@
 
                 }
             };
-            console.log(vm.serviceCurrent);
             $http.post("/api/updateService", newService)
                 .success(function (data) {
-                    //vm.loadTable();
-                    alert("test");
                     service.editMode = false;
                 })
                 .error(function (data) {

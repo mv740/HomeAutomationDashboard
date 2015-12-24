@@ -44,7 +44,7 @@
                 <h2 class="text-light">Quick settings</h2>
                 <ul class="unstyled-list fg-dark" ng-controller="LoginController as authenticate">
                     <li><a href="" class="fg-white1 fg-hover-yellow">Profile</a></li>
-                    <li><a href="" class="fg-white2 fg-hover-yellow">Security</a></li>
+                    <li><a ui-sref="account" class="fg-white2 fg-hover-yellow">My Account</a></li>
                     <li><a class="fg-white3 fg-hover-yellow" ng-click="authenticate.logout()">Logout</a></li>
                 </ul>
             </div>
@@ -78,6 +78,7 @@
 <script type="text/javascript" src="/public/assets/js/Login.controller.js"></script>
 <script type="text/javascript" src="/public/assets/js/service.controller.js"></script>
 <script type="text/javascript" src="/public/assets/js/service.directive.js"></script>
+<script type="text/javascript" src="/public/assets/js/Account.controller.js"></script>
 
 
 </body>

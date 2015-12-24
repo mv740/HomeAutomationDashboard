@@ -27,7 +27,7 @@ var LocalStrategy = require('passport-local').Strategy;
 /////////////////////////////////////////////////////////////////////////////
 
 
-passport.use('local1', new LocalStrategy(
+passport.use('local', new LocalStrategy(
     {
         usernameField: 'username',
         passwordField: 'password'
@@ -70,12 +70,12 @@ router.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
-    cookie: {secured: true}
+    cookie: {secured: false}
 }));
 router.use(passport.initialize());
 router.use(passport.session());
 //////////////////////////////////////////////////
-router.post('/login', passport.authenticate('local1'), function (req, res) {
+router.post('/login', passport.authenticate('local'), function (req, res) {
     //passport.authenticate('local')
     console.log(req.body);
 
@@ -85,35 +85,10 @@ router.post('/login', passport.authenticate('local1'), function (req, res) {
     res.send(auth);
 });
 
-
-router.post('/public/LoginPage.html', function (req, res, next) {
-    passport.authenticate('local1', function (err, user, info) {
-        if (err) {
-            return next(err); // will generate a 500 error
-        }
-        // Generate a JSON response reflecting authentication status
-        if (!user) {
-            return res.status(401).send({success: false, message: 'authentication failed'});
-        }
-        req.login(user, function (err) {
-            if (err) {
-                return next(err);
-            }
-            return res.send({success: true, message: 'authentication succeeded', username: req.body.username});
-        });
-    })(req, res, next);
-});
-
-router.get('/public/loginPage.html', function (req, res) {
-    console.log(req.flash('error'));
-    var log = (req.flash('error'));
-
-    res.sendStatus(req.flash('success', 'This is a flash message using the express-flash module.'));
-});
 // AUTHENTICATION -------------------------------------------------------------
 router.post('/login', function (req, res, next) {
     console.log(req.body);
-    passport.authenticate('local1', function (err, user, info) {
+    passport.authenticate('local', function (err, user, info) {
         if (err) {
             return next(err); // will generate a 500 error
         }
@@ -131,18 +106,22 @@ router.post('/login', function (req, res, next) {
 });
 
 router.get('/logout', function (req, res) {
-    req.logOut();
-    res.redirect('/');
+    req.logout();
+    req.session.destroy(function (err) {
+        console.log("user is log out");
+        res.redirect('/');
+    });
 });
 
 var isAuthenticated = function (req, res, next) {
     if (!req.isAuthenticated())
-        res.redirect("/public/loginPage.html");
+        res.redirect("/login");
     else
         next();
 };
 
 router.get('/hello', isAuthenticated, function (req, res) {
+    console.log(req.user.username);
     res.send('look at me!');
 });
 
@@ -172,9 +151,9 @@ router.get('/flexmetro', function (request, response) {
 
 // LIST DIRECTIVE DATABASE TESTING ////////////////////////////////////////////////////////////////
 
-router.get('/api/list/', function (request, response) {
+router.get('/api/list/',isAuthenticated, function (request, response) {
 
-    MemberModel.findOne({username: 'mv740'}, function (err, member) {
+    MemberModel.findOne({username: request.user.username}, function (err, member) {
 
         //console.log(database);
         var serviceType = member.serviceType;
@@ -202,9 +181,9 @@ router.get('/api/list/', function (request, response) {
 
 });
 
-router.get('/api/listView/', function (request, response) {
+router.get('/api/listView/',isAuthenticated, function (request, response) {
 
-    MemberModel.findOne({username: 'mv740'}, function (err, member) {
+    MemberModel.findOne({username: request.user.username}, function (err, member) {
 
         //console.log(database);
         var serviceType = member.serviceType;

@@ -44,6 +44,11 @@
                 templateUrl: '/public/view-register.html',
                 authenticate: false
             })
+            .state('account', {
+                url: '/account',
+                templateUrl: '/public/view-account.html',
+                authenticate: true
+            })
     }
 
                     //['$rootScope', '$state', 'AuthenticationService'];

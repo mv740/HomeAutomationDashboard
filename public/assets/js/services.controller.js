@@ -7,11 +7,11 @@
     'use strict';
 
     angular.module('Dashboard')
-        .controller('Service', Service);
+        .controller('ServicesController', ServicesController);
 
-    Service.$inject = ['$http', '$timeout'];
+    ServicesController.$inject = ['$http', '$timeout'];
 
-    function Service($http, $timeout) {
+    function ServicesController($http, $timeout) {
         //vm = view models
         var vm = this;
 

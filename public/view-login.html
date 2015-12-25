@@ -1,21 +1,21 @@
-<div class="margin20">
+<div class="margin30">
     <div style="width: 20rem; background: white; margin-left: auto; margin-right: auto">
         <div class="login-form padding20 block-shadow" ng-controller="LoginController as authenticate">
 
-            <form name="authenticate.form" novalidate ng-submit="authenticate.login(account)" >
+            <form name="authenticate.form" novalidate ng-submit="authenticate.login(authenticate.account)" >
                 <h1 class="text-light">Login to service</h1>
                 <hr class="thin"/>
                 <br />
                 <div class="input-control text full-size" data-role="input">
                     <span class="mif-user prepend-icon"></span>
-                    <input type="text" id="user_login" placeholder="Username" name="user_login" ng-model="account.username"  required>
+                    <input type="text" id="user_login" placeholder="Username" name="user_login" ng-model="authenticate.account.username"  required>
                     <button class="button helper-button clear"><span class="mif-cross"></span></button>
                 </div>
                 <br />
                 <br />
                 <div class="input-control password full-size" data-role="input">
                     <span class="mif-lock prepend-icon"></span>
-                    <input type="password" ng-model="account.password" placeholder="Password" name=user_password" id="user_password" required>
+                    <input type="password" ng-model="authenticate.account.password" placeholder="Password" name=user_password" id="user_password" required>
                     <button class="button helper-button reveal"><span class="mif-looks"></span></button>
                 </div>
                 <br />

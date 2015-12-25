@@ -10,11 +10,11 @@
 
     angular
         .module('Dashboard')
-        .controller('Account', Account);
+        .controller('AccountController', AccountController);
 
-    Account.$inject = ['AuthenticationService', '$cookies'];
+    AccountController.$inject = ['AuthenticationService', '$cookies'];
 
-    function Account(AuthenticationService) {
+    function AccountController(AuthenticationService) {
         var vm = this;
         vm.account = {
             username : AuthenticationService.getUserName()

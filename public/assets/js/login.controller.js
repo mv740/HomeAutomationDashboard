@@ -9,22 +9,28 @@
         .module('Dashboard')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['AuthenticationService', '$cookies'];
+    LoginController.$inject = ['AuthenticationService', '$cookies', 'ngNotify'];
 
-    function LoginController(AuthenticationService, $cookies) {
+    function LoginController(AuthenticationService, $cookies, ngNotify) {
         var vm = this;
+        vm.error = false;
+
 
         //http://jasonwatmore.com/post/2014/05/26/AngularJS-Basic-HTTP-Authentication-Example.aspx
 
-        vm.login = function (data) {
-            AuthenticationService.login(data);
-        };
-
-        vm.logout = function()
+        function resetForm()
         {
-            AuthenticationService.logout();
+            vm.error = true;
+            vm.account = {};
         }
 
+        vm.login = function (data) {
+           AuthenticationService.login(data, resetForm);
+        };
+
+        vm.logout = function () {
+            AuthenticationService.logout();
+        }
 
 
     }

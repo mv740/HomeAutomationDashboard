@@ -1,35 +1,35 @@
-<div class="margin20">
+<div class="margin30">
     <div style="width: 20rem; background: white; margin-left: auto; margin-right: auto">
-        <div class="login-form padding20 block-shadow" ng-controller="LoginController as authenticate">
+        <div class="login-form padding20 block-shadow" ng-controller="RegisterController as ctrl">
 
-            <form name="authenticate.form" novalidate ng-submit="authenticate.submit(account)" >
+            <form name="ctrl.form" novalidate ng-submit="ctrl.register(ctrl.account)" >
                 <h1 class="text-light">Create Account</h1>
                 <hr class="thin bg-orange"/>
                 <br />
                 <div class="input-control text full-size" data-role="input">
                     <span class="mif-user prepend-icon"></span>
-                    <input type="text" id="user_login" name="user_login" placeholder="Username" ng-model="account.username"  required>
+                    <input type="text" id="user_login" name="user_login" placeholder="Username" ng-model="ctrl.account.username"  required>
                     <button class="button helper-button clear"><span class="mif-cross"></span></button>
                 </div>
                 <br />
                 <br />
                 <div class="input-control password full-size" data-role="input">
                     <span class="mif-lock prepend-icon"></span>
-                    <input type="password" ng-model="account.password" placeholder="Password" name=user_password" id="user_password" required>
+                    <input type="password" ng-model="ctrl.account.password" placeholder="Password" name=user_password" id="user_password" required>
                     <button class="button helper-button reveal"><span class="mif-looks"></span></button>
                 </div>
                 <br />
                 <br />
                 <div class="input-control password full-size" data-role="input">
                     <span class="mif-lock prepend-icon"></span>
-                    <input type="password" ng-model="account.password" placeholder="Confirm password" name=user_password" id="user_password_confirmation" required>
+                    <input type="password" ng-model="ctrl.account.passwordConfirmation" placeholder="Confirm password" name=user_password" id="user_password_confirmation" required>
                     <button class="button helper-button reveal"><span class="mif-looks"></span></button>
                 </div>
                 <br/>
                 <br/>
 
                 <div class="form-actions">
-                    <button type="submit" class="button warning" ng-disabled="!authenticate.form.$valid">Register</button>
+                    <button type="submit" class="button warning" ng-disabled="!ctrl.form.$valid">Register</button>
                 </div>
             </form>
         </div>

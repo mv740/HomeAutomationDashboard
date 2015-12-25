@@ -14,8 +14,15 @@ var flash = require('connect-flash');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/NodeTutorial'); // pool of 5 connection default
+var connection = mongoose.connect('mongodb://localhost/NodeTutorial'); // pool of 5 connection default
+var db = mongoose.connection;
 
+
+//models
+var service = require('../models/service');
+var ServiceModel = mongoose.model('ServiceModel');
+//intialize
+database.initializeServices(ServiceModel, db, mongoose);
 
 var member = require('../models/member');
 var MemberModel = mongoose.model('MemberModel');
@@ -214,7 +221,7 @@ router.get('/api/listView/',isAuthenticated, function (request, response) {
 });
 
 router.get('/api/list/serviceType', function (request, response) {
-    database.getServiceTypes(MemberModel, request, response);
+    database.getServiceTypes(ServiceModel, request, response);
 });
 
 router.post('/api/insertService', function (req, res) {

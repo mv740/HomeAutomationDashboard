@@ -4,15 +4,42 @@
  */
 
 
-exports.getServiceTypes = function (MemberModel, request, response) {
-    MemberModel.findOne({username: request.user.username}, function (err, member) {
+exports.initializeServices = function (ServiceModel, db, mongoose) {
 
+    var ServicesList = require('./models/service.config.js');
+
+    db.on('open', function () {
+        mongoose.connection.db.listCollections({name: 'service'}).toArray(function (err, foundCollection) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                //console.log(foundCollection);
+                if (foundCollection.length != 1) {
+                    //not found then doesn't exist
+                    ServiceModel.collection.insert(ServicesList, onInsert);
+                    function onInsert(err, docs) {
+                        if (err) {
+                            // TODO: handle error
+                        } else {
+                            console.info('services were successfully created!', docs.length);
+                        }
+                    }
+                }
+            }
+        });
+    });
+};
+
+exports.getServiceTypes = function (ServiceModel, request, response) {
+    ServiceModel.find(function (err, servicesList) {
+        //console.log(servicesList);
         var list = [];
         //console.log(database);
-        member.ServiceSetting.forEach(function (ServiceSetting) {
-                var serviceType = ServiceSetting.serviceType;
+        servicesList.forEach(function (service) {
                 var object = {
-                    "serviceType": serviceType
+                    "serviceType": service.name,
+                    "description": service.description
                 };
                 list.push(object);
             }
@@ -33,6 +60,7 @@ exports.insertService = function (MemberModel, req, res) {
         serviceName: req.body.service.name,
         serviceHide: false
     };
+
     //The $push operator appends a specified value to an array.
     MemberModel.findOneAndUpdate({username: currentUser, "ServiceSetting.serviceType": type},
         {$push: {"ServiceSetting.$.service": newService}},
@@ -84,17 +112,15 @@ exports.updateService = function (MemberModel, req, res) {
                     update,
                     function (err) {
                         console.log("updateService used");
-                        if(err !=null)
-                        {
-                            console.log("updateService Error : " +err)
+                        if (err != null) {
+                            console.log("updateService Error : " + err)
                         }
                     });
 
             });
         res.end();
 
-    } else if (currentType != newType)
-    {
+    } else if (currentType != newType) {
         //delete old one
         var currentService = {
             serviceName: currentServiceName
@@ -113,7 +139,7 @@ exports.updateService = function (MemberModel, req, res) {
 
         //insert new one with new type and check if we need to update the service name
         var newService = {
-            serviceName: (newServiceName == currentServiceName)?currentServiceName:newServiceName,
+            serviceName: (newServiceName == currentServiceName) ? currentServiceName : newServiceName,
             serviceHide: false
         };
         //The $push operator appends a specified value to an array.
@@ -121,15 +147,13 @@ exports.updateService = function (MemberModel, req, res) {
             {$push: {"ServiceSetting.$.service": newService}},
             function (err, model) {
                 console.log("updateService used");
-                if(err !=null)
-                {
-                    console.log("updateService Error : " +err)
+                if (err != null) {
+                    console.log("updateService Error : " + err)
                 }
 
             });
         res.end();
-    }else
-    {
+    } else {
         //nothing to change
         res.end()
     }
@@ -195,9 +219,8 @@ exports.hideServices = function (MemberModel, req, res) {
                 update,
                 function (err) {
                     console.log("hideServices used");
-                    if(err !=null)
-                    {
-                        console.log("hideServices Error : " +err)
+                    if (err != null) {
+                        console.log("hideServices Error : " + err)
                     }
                 });
         });
@@ -212,10 +235,25 @@ exports.createAccount = function (MemberModel, req, res) {
     MemberModel.findOne({'username': username}, function (error, result) {
         console.log(result);
         if (result === null) {
+
+            var ServicesList = require('./models/service.config.js');
+            var servicelist = [];
+            ServicesList.forEach(function(service)
+            {
+                var service =
+                    {
+                        "serviceType": service.name,
+                        "service": []
+                    };
+
+                servicelist.push(service);
+            });
+
             var newMember = new MemberModel(
                 {
                     "username": username,
-                    "password": pass
+                    "password": pass,
+                    "ServiceSetting" : servicelist
                 }
             );
             newMember.save(function (error, newAccount) {
@@ -225,7 +263,7 @@ exports.createAccount = function (MemberModel, req, res) {
             });
             res.send({'msg': 'created user ' + username})
         } else
-            res.send({'error': 'this user already exist!'})
+            res.status(403).send({'error': 'this user already exist!'})
 
     })
 };

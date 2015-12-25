@@ -1,5 +1,5 @@
 <div class="container">
-    <div ng-controller="Service as ctrl" class="grid">
+    <div ng-controller="ServicesController as ctrl" class="grid">
         <div class="row cells4">
             <div class="cell colspan3 ">
                 <div class="panel">
@@ -8,7 +8,7 @@
                         <span class="title">Services</span>
                     </div>
                     <div class="content ">
-                        <table class="table ">
+                        <table class="table " ng-show="ctrl.table.length>0">
                             <thead>
                             <tr class="">
                                 <th class="">Service name</th>
@@ -72,6 +72,10 @@
                             </tr>
                             </tbody>
                         </table>
+
+                        <div ng-show="(ctrl.table.length ==0)">
+                            hello
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 
 <div class="grid">
-    <div ng-controller="Service as myservices">
+    <div ng-controller="ServicesController as myservices">
         <div class="row">
             <div ng-repeat="data in myservices.viewServices">
                 <service id="{{ data.serviceName }}" type="{{data.serviceType}}"></service>

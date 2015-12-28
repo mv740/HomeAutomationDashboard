@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/mv740/HomeAutomatonDashboard#readme",
   "dependencies": {
+    "bcrypt": "^0.8.5",
     "body-parser": "^1.14.1",
     "connect-flash": "^0.1.1",
     "express": "^4.13.3",

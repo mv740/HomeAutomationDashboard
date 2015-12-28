@@ -11,14 +11,7 @@ var options = {
     passphrase: '1q2w'
 };
 
-
-
 var routes = require('./routes/index');
-
-//needle = request http
-var needle = require('needle');
-var prtg = require('./prtg');
-
 
 // New call to compress content
 app.use('/public', express.static(__dirname + '/public', {

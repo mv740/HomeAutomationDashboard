@@ -19,8 +19,9 @@ var ServiceSetting = new Schema(
 );
 var Member = new Schema(
     {
-        username: String,
-        password: String,
+        username: {type : String, required : true, unique : true},
+        password: {type : String, required : true},
+        email : {type : String, required : true, unique : true},
         ServiceSetting: [ServiceSetting]
     }
 );

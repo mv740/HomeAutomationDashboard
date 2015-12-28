@@ -27,6 +27,13 @@
                 type : 'warn'
             });
         }
+        function emailExist()
+        {
+            ngNotify.set('Sorry, that email is already used!', {
+                position: 'top',
+                type : 'warn'
+            });
+        }
 
         vm.register = function(data)
         {
@@ -42,8 +49,15 @@
                     //when register is done, log the user in
                     //trigger success popup then login in
                     AuthenticationService.login(data,null);
-                }).error(function (info, status) {
-                   usernameExist();
+                }).error(function (data, status) {
+                    //console.error(data);
+                    if(data.status == 'duplicate username')
+                    {
+                        usernameExist();
+                    }else if(data.status == 'duplicate email')
+                    {
+                        emailExist();
+                    }
                 });
 
 

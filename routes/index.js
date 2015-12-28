@@ -9,79 +9,25 @@ var prtg = require('../prtg');
 var particle = require('../particle');
 var database = require('../database');
 
-var session = require('express-session');
-var flash = require('connect-flash');
-var bodyParser = require('body-parser');
+//todo delete this after extracting all our database method into the database js file
 var mongoose = require('mongoose');
 
-var connection = mongoose.connect('mongodb://localhost/NodeTutorial'); // pool of 5 connection default
+
+mongoose.connect('mongodb://localhost/NodeTutorial'); // pool of 5 connection default
 var db = mongoose.connection;
 
 
-//models
-var service = require('../models/service');
-var ServiceModel = mongoose.model('ServiceModel');
 //intialize
-database.initializeServices(ServiceModel, db, mongoose);
+database.initializeServices(db, mongoose);
 
-var member = require('../models/member');
+//todo delete this after extracting all our database method into the database js file
+require('../models/member');
 var MemberModel = mongoose.model('MemberModel');
 
-/////////
+
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+require('./config/authentication.js')(passport, router);
 
-/////////////////////////////////////////////////////////////////////////////
-
-
-passport.use('local', new LocalStrategy(
-    {
-        usernameField: 'username',
-        passwordField: 'password'
-    },
-    function (username, password, done) {
-        console.log(username + ":" + password);
-        MemberModel.findOne({username: username}, function (err, user) {
-            //console.log(user);
-            if (err) {
-                return done(err);
-            }
-            if (!user) {
-                return done(null, false, {message: 'Incorrect username.'});
-            }
-            if (user.password !== password) {
-                return done(null, false, {message: 'Incorrect password.'});
-            }
-            return done(null, user);
-        });
-    }
-));
-
-passport.serializeUser(function (user, done) {
-    done(null, user.id);
-});
-
-passport.deserializeUser(function (id, done) {
-    MemberModel.findById(id, function (err, user) {
-        done(err, user);
-    });
-});
-
-
-router.use(flash());
-router.use(bodyParser.urlencoded({
-    extended: true
-}));
-router.use(bodyParser.json());
-router.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {secured: false}
-}));
-router.use(passport.initialize());
-router.use(passport.session());
-//////////////////////////////////////////////////
 router.post('/login', passport.authenticate('local'), function (req, res) {
     //passport.authenticate('local')
     console.log(req.body);
@@ -221,28 +167,28 @@ router.get('/api/listView/',isAuthenticated, function (request, response) {
 });
 
 router.get('/api/list/serviceType', function (request, response) {
-    database.getServiceTypes(ServiceModel, request, response);
+    database.getServiceTypes(request, response);
 });
 
 router.post('/api/insertService', function (req, res) {
-    database.insertService(MemberModel, req, res);
+    database.insertService(req, res);
 });
 
 router.post('/api/createAccount', function (req, res) {
-    database.createAccount(MemberModel, req, res);
+    database.createAccount(req, res);
 });
 
 router.post('/api/updateService', function (req, res) {
-  database.updateService(MemberModel,req,res);
+  database.updateService(req,res);
 });
 
 
 router.post('/api/hideService', function (req, res) {
-    database.hideServices(MemberModel, req, res);
+    database.hideServices(req, res);
 });
 
 router.post('/api/deleteService', function (req, res) {
-    database.deleteService(MemberModel, req, res);
+    database.deleteService(req, res);
 });
 
 // ////////////////////////////////////////////////////////////////

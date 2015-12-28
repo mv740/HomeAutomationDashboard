@@ -2,9 +2,17 @@
  * Created by michal on 10/21/2015.
  * Database queries
  */
+var mongoose = require('mongoose');
+require('./models/member');
+var MemberModel = mongoose.model('MemberModel');
+
+require('./models/service');
+var ServiceModel = mongoose.model('ServiceModel');
 
 
-exports.initializeServices = function (ServiceModel, db, mongoose) {
+
+
+exports.initializeServices = function (db, mongoose) {
 
     var ServicesList = require('./models/service.config.js');
 
@@ -31,7 +39,7 @@ exports.initializeServices = function (ServiceModel, db, mongoose) {
     });
 };
 
-exports.getServiceTypes = function (ServiceModel, request, response) {
+exports.getServiceTypes = function (request, response) {
     ServiceModel.find(function (err, servicesList) {
         //console.log(servicesList);
         var list = [];
@@ -50,7 +58,7 @@ exports.getServiceTypes = function (ServiceModel, request, response) {
 
 };
 
-exports.insertService = function (MemberModel, req, res) {
+exports.insertService = function (req, res) {
 
     console.log(req.body);
     var type = req.body.service.type;
@@ -71,7 +79,7 @@ exports.insertService = function (MemberModel, req, res) {
     res.end();
 };
 
-exports.updateService = function (MemberModel, req, res) {
+exports.updateService = function (req, res) {
     var newType = req.body.service.newType;
     var newServiceName = req.body.service.newName;
     var currentType = req.body.service.type;
@@ -159,7 +167,7 @@ exports.updateService = function (MemberModel, req, res) {
     }
 };
 
-exports.deleteService = function (MemberModel, req, res) {
+exports.deleteService = function (req, res) {
     console.log(req.body);
     var type = req.body.service.type;
     var currentUser = req.user.username;
@@ -184,7 +192,7 @@ exports.deleteService = function (MemberModel, req, res) {
     res.end();
 };
 
-exports.hideServices = function (MemberModel, req, res) {
+exports.hideServices = function (req, res) {
     var serviceType = req.body.serviceType;
     var serviceName = req.body.serviceName;
     var serviceHide = req.body.serviceHide;
@@ -228,9 +236,10 @@ exports.hideServices = function (MemberModel, req, res) {
     res.end();
 };
 
-exports.createAccount = function (MemberModel, req, res) {
+exports.createAccount = function (req, res) {
     var username = req.body.username;
     var pass = req.body.password;
+    var email = req.body.email;
 
     MemberModel.findOne({'username': username}, function (error, result) {
         console.log(result);
@@ -253,17 +262,24 @@ exports.createAccount = function (MemberModel, req, res) {
                 {
                     "username": username,
                     "password": pass,
+                    "email" : email,
                     "ServiceSetting" : servicelist
                 }
             );
             newMember.save(function (error, newAccount) {
                 if (error) {
-                    return console.error(error);
-                }
+                    //duplicate key
+                    if(error.code == 11000){
+                        res.status(409).send({'error': 'this email is already used!', status: 'duplicate email'});
+                        //console.log(error.code)
+                    }
+                    //return console.error(error);
+                }else
+                    res.send({'msg': 'created user ' + username})
             });
-            res.send({'msg': 'created user ' + username})
+            //
         } else
-            res.status(403).send({'error': 'this user already exist!'})
+            res.status(409).send({'error': 'this user already exist!', status: 'duplicate username'})
 
     })
 };

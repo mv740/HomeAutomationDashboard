@@ -39,7 +39,10 @@
 
                 .error(function (info, status, headers, config) {
                     SessionService.authenticated = false;
-                    resetForm();
+                    if(resetForm != null)
+                    {
+                        resetForm();
+                    }
                     failedAuthNotification();
                 })
 

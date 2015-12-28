@@ -246,26 +246,28 @@ exports.createAccount = function (req, res) {
         if (result === null) {
 
             var ServicesList = require('./models/service.config.js');
-            var servicelist = [];
+            var serviceList = [];
             ServicesList.forEach(function(service)
             {
-                var service =
+                var serviceItem =
                     {
                         "serviceType": service.name,
                         "service": []
                     };
 
-                servicelist.push(service);
+                serviceList.push(serviceItem);
             });
-
+            
             var newMember = new MemberModel(
                 {
                     "username": username,
                     "password": pass,
                     "email" : email,
-                    "ServiceSetting" : servicelist
+                    "ServiceSetting" : serviceList
                 }
             );
+
+
             newMember.save(function (error, newAccount) {
                 if (error) {
                     //duplicate key

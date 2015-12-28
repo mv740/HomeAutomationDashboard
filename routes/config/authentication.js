@@ -1,6 +1,7 @@
 /**
  * Created by micha on 12/28/2015.
  */
+var passport = require('passport');
 var mongoose = require('mongoose');
 require('../../models/member');
 var MemberModel = mongoose.model('MemberModel');
@@ -14,7 +15,7 @@ var bodyParser = require('body-parser');
 // =========================================================================
 // required for persistent login sessions
 // passport needs ability to serialize and unserialize users out of session
-module.exports = function (passport, app) {
+module.exports = function (app) {
     passport.use('local', new LocalStrategy(
         {
             usernameField: 'username',
@@ -30,10 +31,14 @@ module.exports = function (passport, app) {
                 if (!user) {
                     return done(null, false, {message: 'Incorrect username.'});
                 }
-                if (user.password !== password) {
-                    return done(null, false, {message: 'Incorrect password.'});
-                }
-                return done(null, user);
+                user.comparePassword(password, function(err,isMatch){
+                    if(isMatch)
+                    {
+                        return done(null,user);
+                    }else {
+                        return done(null, false, {message: 'Incorrect password.'});
+                    }
+                })
             });
         }
     ));
@@ -49,6 +54,27 @@ module.exports = function (passport, app) {
     });
 
 
+    passport.authentication = function(req, res, next) {
+        console.log(req.body);
+        passport.authenticate('local', function (err, user, info) {
+            if (err) {
+                return next(err); // will generate a 500 error
+            }
+            // Generate a JSON response reflecting authentication status
+            if (!user) {
+                return res.status(401).send({success: false, message: 'authentication failed'});
+            }
+            req.login(user, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.send({success: true, message: 'authentication succeeded', username: req.body.username});
+            });
+        })(req, res, next);
+
+    };
+
+
     app.use(flash());
     app.use(bodyParser.urlencoded({
         extended: true
@@ -62,4 +88,26 @@ module.exports = function (passport, app) {
     }));
     app.use(passport.initialize());
     app.use(passport.session());
+
+    return passport;
+};
+
+exports.authentication = function(req, res, next) {
+    console.log(req.body);
+    passport.authenticate('local', function (err, user, info) {
+        if (err) {
+            return next(err); // will generate a 500 error
+        }
+        // Generate a JSON response reflecting authentication status
+        if (!user) {
+            return res.status(401).send({success: false, message: 'authentication failed'});
+        }
+        req.login(user, function (err) {
+            if (err) {
+                return next(err);
+            }
+            return res.send({success: true, message: 'authentication succeeded', username: req.body.username});
+        });
+    })(req, res, next);
+
 };

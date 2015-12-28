@@ -25,37 +25,14 @@ require('../models/member');
 var MemberModel = mongoose.model('MemberModel');
 
 
-var passport = require('passport');
-require('./config/authentication.js')(passport, router);
 
-router.post('/login', passport.authenticate('local'), function (req, res) {
-    //passport.authenticate('local')
-    console.log(req.body);
+var passport = require('./config/authentication.js')(router);
 
-    var auth = {
-        'authentication': 'success'
-    };
-    res.send(auth);
-});
 
 // AUTHENTICATION -------------------------------------------------------------
+
 router.post('/login', function (req, res, next) {
-    console.log(req.body);
-    passport.authenticate('local', function (err, user, info) {
-        if (err) {
-            return next(err); // will generate a 500 error
-        }
-        // Generate a JSON response reflecting authentication status
-        if (!user) {
-            return res.status(401).send({success: false, message: 'authentication failed'});
-        }
-        req.login(user, function (err) {
-            if (err) {
-                return next(err);
-            }
-            return res.send({success: true, message: 'authentication succeeded', username: req.body.username});
-        });
-    })(req, res, next);
+    passport.authentication(req, res, next);
 });
 
 router.get('/logout', function (req, res) {

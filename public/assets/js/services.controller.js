@@ -35,7 +35,12 @@
         vm.serviceCurrent = {};
 
         function loadServiceViewTable() {
-            $http.get('/api/listView/').
+            $http.get('/api/listView/', function (request, response) {
+                var tag = request.params.tag;
+                particle.getTemperature(tag, function (value) {
+                    response.send(value);
+                });
+            }).
                 then(function (response) {
                     // this callback will be called asynchronously
                     // when the response is available
@@ -44,7 +49,12 @@
                 });
         }
         function loadTable() {
-            $http.get('/api/list/').
+            $http.get('/api/list/', function (request, response) {
+                var tag = request.params.tag;
+                particle.getTemperature(tag, function (value) {
+                    response.send(value);
+                });
+            }).
                 then(function (response) {
                     // this callback will be called asynchronously
                     // when the response is available
@@ -55,7 +65,12 @@
 
                     vm.status = "Loading";
                 });
-            $http.get('/api/list/serviceType').
+            $http.get('/api/list/serviceType', function (request, response) {
+                var tag = request.params.tag;
+                particle.getTemperature(tag, function (value) {
+                    response.send(value);
+                });
+            }).
                 then(function (response) {
                     // this callback will be called asynchronously
                     // when the response is available

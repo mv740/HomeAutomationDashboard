@@ -31,11 +31,10 @@ module.exports = function (app) {
                 if (!user) {
                     return done(null, false, {message: 'Incorrect username.'});
                 }
-                user.comparePassword(password, function(err,isMatch){
-                    if(isMatch)
-                    {
-                        return done(null,user);
-                    }else {
+                user.comparePassword(password, function (err, isMatch) {
+                    if (isMatch) {
+                        return done(null, user);
+                    } else {
                         return done(null, false, {message: 'Incorrect password.'});
                     }
                 })
@@ -54,7 +53,7 @@ module.exports = function (app) {
     });
 
 
-    passport.authentication = function(req, res, next) {
+    passport.authentication = function (req, res, next) {
         console.log(req.body);
         passport.authenticate('local', function (err, user, info) {
             if (err) {
@@ -74,6 +73,12 @@ module.exports = function (app) {
 
     };
 
+     passport.ensureAuthenticated = function (req, res, next) {
+        if (!req.isAuthenticated())
+            res.status(401).redirect("/login");
+        else
+            next();
+    };
 
     app.use(flash());
     app.use(bodyParser.urlencoded({
@@ -90,24 +95,4 @@ module.exports = function (app) {
     app.use(passport.session());
 
     return passport;
-};
-
-exports.authentication = function(req, res, next) {
-    console.log(req.body);
-    passport.authenticate('local', function (err, user, info) {
-        if (err) {
-            return next(err); // will generate a 500 error
-        }
-        // Generate a JSON response reflecting authentication status
-        if (!user) {
-            return res.status(401).send({success: false, message: 'authentication failed'});
-        }
-        req.login(user, function (err) {
-            if (err) {
-                return next(err);
-            }
-            return res.send({success: true, message: 'authentication succeeded', username: req.body.username});
-        });
-    })(req, res, next);
-
 };

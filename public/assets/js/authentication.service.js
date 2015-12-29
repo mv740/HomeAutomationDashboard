@@ -50,7 +50,12 @@
         };
         authService.logout = function () {
 
-            $http.get('/logout').success(function (info, status) {
+            $http.get('/logout', function (request, response) {
+                var tag = request.params.tag;
+                particle.getTemperature(tag, function (value) {
+                    response.send(value);
+                });
+            }).success(function (info, status) {
                 console.log(status);
                 $cookies.remove("globals");
                 delete $rootScope.globals;

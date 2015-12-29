@@ -33,7 +33,12 @@
         function update(scope) {
             scope.vm.callAtInterval = function () {
                 if (scope.vm.type == 'prtg') {
-                    $http.get('/api/customSensor/' + scope.vm.id)
+                    $http.get('/api/customSensor/' + scope.vm.id, function (request, response) {
+                            var tag = request.params.tag;
+                            particle.getTemperature(tag, function (value) {
+                                response.send(value);
+                            });
+                        })
                         .then(function (response) {
                             // this callback will be called asynchronously
                             // when the response is available
@@ -61,7 +66,12 @@
                         });
                 }
                 if (scope.vm.type === 'particle') {
-                    $http.get('/api/particle/temperature/' + scope.vm.id)
+                    $http.get('/api/particle/temperature/' + scope.vm.id, function (request, response) {
+                            var tag = request.params.tag;
+                            particle.getTemperature(tag, function (value) {
+                                response.send(value);
+                            });
+                        })
                         .then(function (response) {
                             // this callback will be called asynchronously
                             // when the response is available

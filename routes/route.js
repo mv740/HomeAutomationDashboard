@@ -28,9 +28,6 @@ var MemberModel = mongoose.model('MemberModel');
 
 var passport = require('./config/authentication.js')(router);
 
-
-// AUTHENTICATION -------------------------------------------------------------
-
 router.post('/login', function (req, res, next) {
     passport.authentication(req, res, next);
 });
@@ -43,22 +40,12 @@ router.get('/logout', function (req, res) {
     });
 });
 
-var isAuthenticated = function (req, res, next) {
-    if (!req.isAuthenticated())
-        res.redirect("/login");
-    else
-        next();
-};
-
-router.get('/hello', isAuthenticated, function (req, res) {
+router.get('/hello', passport.ensureAuthenticated, function (req, res) {
     console.log(req.user.username);
     res.send('look at me!');
 });
 
-router.get('/hello', function (req, res) {
-    console.log(req.flash('error'));
-    res.sendFile('public/loginPage.html', {root: __dirname + '/../'});
-});
+
 
 //router.use(isAuthenticated);
 
@@ -66,12 +53,14 @@ router.get('/test', function (req, res) {
     console.log(req.flash('error'));
     res.sendFile('public/loginPage.html', {root: __dirname + '/../'});
 });
-/////////////////////////////////////////////////////////////////////////////
+
+//Frontend routes ==============================================================================================
 
 /* GET home page. */
 router.get('/', function (request, response) {
     response.sendFile('public/index.html', {root: __dirname + '/../'});
 });
+
 router.get('/metro', function (request, response) {
     response.sendFile('public/metro.html', {root: __dirname + '/../'});
 });
@@ -81,7 +70,7 @@ router.get('/flexmetro', function (request, response) {
 
 // LIST DIRECTIVE DATABASE TESTING ////////////////////////////////////////////////////////////////
 
-router.get('/api/list/',isAuthenticated, function (request, response) {
+router.get('/api/list/',passport.ensureAuthenticated, function (request, response) {
 
     MemberModel.findOne({username: request.user.username}, function (err, member) {
 
@@ -111,7 +100,7 @@ router.get('/api/list/',isAuthenticated, function (request, response) {
 
 });
 
-router.get('/api/listView/',isAuthenticated, function (request, response) {
+router.get('/api/listView/', passport.ensureAuthenticated, function (request, response) {
 
     MemberModel.findOne({username: request.user.username}, function (err, member) {
 
@@ -168,114 +157,11 @@ router.post('/api/deleteService', function (req, res) {
     database.deleteService(req, res);
 });
 
-// ////////////////////////////////////////////////////////////////
-
-
-//API ROUTING ////////////////////////////////////////////////////////////////
-
-router.get('/api/sensorDetails/:id', function (request, response) {
-    var id = request.params.id;
-    prtg.getSensorDetails(id, function (value) {
-        response.send(value);
-    });
-
-});
-router.get('/api/loggedUsers/:id', function (request, response) {
-    var id = request.params.id;
-    prtg.getLoggedUsers(id, function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/systemStatus', function (request, response) {
-    prtg.getSystemStatus(function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/device/:tag', function (request, response) {
-    var tag = request.params.tag;
-    prtg.getDevice(tag, function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/memory/:id', function (request, response) {
-    var id = request.params.id;
-    prtg.getMemory(id, function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/cpu/:id', function (request, response) {
-    var id = request.params.id;
-    prtg.getCPU(id, function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/disk/:id', function (request, response) {
-    var id = request.params.id;
-    prtg.getDisk(id, function (value) {
-        response.send(value);
-    });
-});
-
-router.get('/api/logs/', function (request, response) {
-    //?limit=number&maxLength=number
-    var limit = request.query.limit;
-    var msgLength = request.query.msgLength;
-    prtg.getLogs(limit, msgLength, function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/groupDevices/:groupID', function (request, response) {
-    var groupID = request.params.groupID;
-    prtg.getGroupDevices(groupID, function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/upTime/:id', function (request, response) {
-    var id = request.params.id;
-    prtg.getUpTime(id, function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/ping/:id', function (request, response) {
-    var id = request.params.id;
-    prtg.getPing(id, function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/customSensor/:tag', function (request, response) {
-    var tag = request.params.tag;
-
-    prtg.getCustomSensor(tag, function (value) {
-        response.send(value);
-    });
-
-
-});
-router.get('/api/graph/:id/:hide?', function (request, response) {
-    var id = request.params.id;
-    var hide = request.params.hide;
-    prtg.getGraph(id, hide, function (value) {
-        response.send(value);
-    });
-});
-
-
-// particle
-router.get('/api/particle/:tag', function (request, response) {
-    var tag = request.params.tag;
-    particle.getDevice(tag, function (value) {
-        response.send(value);
-    });
-});
-router.get('/api/particle/temperature/:tag', function (request, response) {
-    var tag = request.params.tag;
-    particle.getTemperature(tag, function (value) {
-        response.send(value);
-    });
-});
+//Not found ROUTING ===========================================================================================
 
 //if url query doesn't match any previous router.get then it will go here and redirect to main page
 router.get('*', function (req, res) {
     res.redirect('/')
 });
+
 module.exports = router;

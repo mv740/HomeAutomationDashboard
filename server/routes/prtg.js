@@ -2,7 +2,7 @@
  * Created by michal on 12/28/2015.
  */
 //================================== routes for PRTG API ====================================
-var prtg = require('../prtg');
+var prtg = require('../../server/controllers/prtg');
 var express = require('express');
 
 'use strict';

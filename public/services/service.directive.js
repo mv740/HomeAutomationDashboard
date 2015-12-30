@@ -46,23 +46,33 @@
                             scope.vm.test = response.data;
                             //TODO need to divide into two controller one per service type
                             if (scope.vm.type == "prtg") {
-                                var status = response.data.prtg.sensors[0].status_raw;
+                                if(response.data.error)
+                                {
+                                    scope.vm.status = "Warning";
+                                    scope.vm.warning = true;
+
+                                }else {
+                                    var status = response.data.prtg.sensors[0].status_raw;
+
+                                    scope.vm.online = false;
+                                    scope.vm.offline = false;
+                                    scope.vm.warning = false;
+                                    if (status == 3) {
+                                        scope.vm.status = "Online";
+                                        scope.vm.online = true;
+                                    }
+                                    if (status == 4) {
+                                        scope.vm.status = "Warning";
+                                        scope.vm.warning = true;
+                                    }
+                                    if (status == 5) {
+                                        scope.vm.status = "Offline";
+                                        scope.vm.offline = true;
+                                    }
+                                }
+
                             }
-                            scope.vm.online = false;
-                            scope.vm.offline = false;
-                            scope.vm.warning = false;
-                            if (status == 3) {
-                                scope.vm.status = "Online";
-                                scope.vm.online = true;
-                            }
-                            if (status == 4) {
-                                scope.vm.status = "Warning";
-                                scope.vm.warning = true;
-                            }
-                            if (status == 5) {
-                                scope.vm.status = "Offline";
-                                scope.vm.offline = true;
-                            }
+
                         });
                 }
                 if (scope.vm.type === 'particle') {
@@ -107,9 +117,9 @@
         function getTemplateUrl() {
             //basic handling
             if (vm.type == "prtg")
-                return "/public/prtg-service-template.html";
+                return "/public/views/partials/prtg-service-template.html";
             if (vm.type == "particle")
-                return "/public/particle-service-template.html";
+                return "/public/views/partials/particle-service-template.html";
         }
 
 

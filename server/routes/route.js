@@ -5,9 +5,9 @@
 
 var express = require('express');
 var router = express.Router();
-var prtg = require('../prtg');
-var particle = require('../particle');
-var database = require('../database');
+var prtg = require('../controllers/prtg');
+var particle = require('../controllers/particle');
+var database = require('../controllers/database');
 
 //todo delete this after extracting all our database method into the database js file
 var mongoose = require('mongoose');
@@ -21,12 +21,12 @@ var db = mongoose.connection;
 database.initializeServices(db, mongoose);
 
 //todo delete this after extracting all our database method into the database js file
-require('../models/member');
+require('../../server/models/member');
 var MemberModel = mongoose.model('MemberModel');
 
 
 
-var passport = require('./config/authentication.js')(router);
+var passport = require('../../server/config/authentication.js')(router);
 
 router.post('/login', function (req, res, next) {
     passport.authentication(req, res, next);
@@ -49,23 +49,21 @@ router.get('/hello', passport.ensureAuthenticated, function (req, res) {
 
 //router.use(isAuthenticated);
 
-router.get('/test', function (req, res) {
-    console.log(req.flash('error'));
-    res.sendFile('public/loginPage.html', {root: __dirname + '/../'});
-});
 
 //Frontend routes ==============================================================================================
+var rootDirectoryPath = {root: __dirname +'/../../'};
 
 /* GET home page. */
 router.get('/', function (request, response) {
-    response.sendFile('public/index.html', {root: __dirname + '/../'});
+    response.sendFile('/public/views/index.html', rootDirectoryPath);
+    //C:\Users\micha\Documents\git\HomeAutomatonDashboard\public\views\index.html
 });
 
 router.get('/metro', function (request, response) {
-    response.sendFile('public/metro.html', {root: __dirname + '/../'});
+    response.sendFile('public/metro.html',rootDirectoryPath);
 });
 router.get('/flexmetro', function (request, response) {
-    response.sendFile('public/flexmetro.html', {root: __dirname + '/../'});
+    response.sendFile('public/flexmetro.html', rootDirectoryPath);
 });
 
 // LIST DIRECTIVE DATABASE TESTING ////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
  */
 var passport = require('passport');
 var mongoose = require('mongoose');
-require('../../models/member');
+require('../../server/models/member');
 var MemberModel = mongoose.model('MemberModel');
 var LocalStrategy = require('passport-local').Strategy;
 var session = require('express-session');

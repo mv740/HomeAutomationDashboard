@@ -6,7 +6,7 @@
 var needle = require('needle');
 
 //todo : replace config file by querying database for user id/pass
-var config = require('./prtgConfig');
+var config = require('./../config/prtgConfig');
 
 
 var errorMessage;

@@ -15,38 +15,38 @@
         $locationProvider.html5Mode(true);
         $urlRouterProvider.otherwise('/home');
 
-
+        //routing
         $stateProvider
             //Home State
             .state('home', {
                 url: '/home',
-                templateUrl: '/public/view-home.html',
+                templateUrl: '/public/views/partials/home.html',
                 authenticate: false
             })
             // Service State
             .state('service', {
                 url: '/service',
-                templateUrl: '/public/view-service.html',
+                templateUrl: '/public/views/partials/service.html',
                 authenticate: true
             })
             .state('demo', {
                 url: '/demo',
-                templateUrl: '/public/demo.html',
-                authenticate: true
+                templateUrl: '/public/views/demo.html',
+                authenticate: false
             })
             .state('login', {
                 url: '/login',
-                templateUrl: '/public/view-login.html',
+                templateUrl: '/public/views/partials/login.html',
                 authenticate: false
             })
             .state('register', {
                 url: '/register',
-                templateUrl: '/public/view-register.html',
+                templateUrl: '/public/views/partials/register.html',
                 authenticate: false
             })
             .state('account', {
                 url: '/account',
-                templateUrl: '/public/view-account.html',
+                templateUrl: '/public/views/partials/account.html',
                 authenticate: true
             })
     }
@@ -67,5 +67,4 @@
             })
     }
     //continue authentication coding http://jasonwatmore.com/post/2014/05/26/AngularJS-Basic-HTTP-Authentication-Example.aspx
-
 })();

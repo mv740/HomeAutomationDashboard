@@ -8,13 +8,13 @@ var app = express();
 var fs = require('fs');
 var https = require('https');
 var options = {
-    key: fs.readFileSync('certificate/server.key.pem'),
-    cert: fs.readFileSync('certificate/server.crt'),
+    key: fs.readFileSync('server/config/certificate/server.key.pem'),
+    cert: fs.readFileSync('server/config/certificate/server.crt'),
     passphrase: '1q2w'
 };
-var routes = require('./routes/route');
-var prtg = require('./routes/prtg');
-var particle = require('./routes/particle');
+var routes = require('./server/routes/route');
+var prtg = require('./server/routes/prtg');
+var particle = require('./server/routes/particle');
 
 // configuration ======================================================
 // set the static files location

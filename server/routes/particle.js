@@ -4,7 +4,7 @@
 
 
 //================================== routes for particle API ====================================
-var particle = require('../particle');
+var particle = require('../../server/controllers/particle');
 var express = require('express');
 
 

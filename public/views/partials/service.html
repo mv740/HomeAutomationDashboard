@@ -22,7 +22,7 @@
                             <tr class="" ng-repeat="service in ctrl.table">
                                 <td width="30%">
                                     <div ng-hide="service.editMode">
-                                        <div class="input-control text">{{ service.serviceName }}</div>
+                                        <div class="v-align-middle">{{ service.serviceName }}</div>
                                     </div>
                                     <div ng-show="service.editMode" data-role="input">
                                         <div class="input-control text">
@@ -32,7 +32,7 @@
                                 </td>
                                 <td width="30%">
                                     <div ng-hide="service.editMode">
-                                        <div class="input-control text">{{ service.serviceType }}</div>
+                                        <div class="v-align-middle">{{ service.serviceType }}</div>
                                     </div>
                                     <div ng-show="service.editMode" class="input-control select" data-role="input">
                                         <select ng-model="service.serviceType" data-validate-func="required"

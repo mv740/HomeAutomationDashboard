@@ -8,6 +8,3 @@
         'ui.router', 'ngCookies', 'ngNotify'
     ])
 })();
-
-
-

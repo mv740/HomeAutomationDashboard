@@ -3,10 +3,10 @@
  * Database queries
  */
 var mongoose = require('mongoose');
-require('./models/member');
+require('./../models/member');
 var MemberModel = mongoose.model('MemberModel');
 
-require('./models/service');
+require('./../models/service');
 var ServiceModel = mongoose.model('ServiceModel');
 
 
@@ -14,7 +14,7 @@ var ServiceModel = mongoose.model('ServiceModel');
 
 exports.initializeServices = function (db, mongoose) {
 
-    var ServicesList = require('./models/service.config.js');
+    var ServicesList = require('./../models/service.config.js');
 
     db.on('open', function () {
         mongoose.connection.db.listCollections({name: 'service'}).toArray(function (err, foundCollection) {
@@ -245,7 +245,7 @@ exports.createAccount = function (req, res) {
         console.log(result);
         if (result === null) {
 
-            var ServicesList = require('./models/service.config.js');
+            var ServicesList = require('./../models/service.config.js');
             var serviceList = [];
             ServicesList.forEach(function(service)
             {

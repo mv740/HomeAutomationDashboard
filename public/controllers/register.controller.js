@@ -25,21 +25,18 @@
                 type: 'warn'
             });
         }
-
         function emailExistNotify() {
             ngNotify.set('Sorry, that email is already used!', {
                 position: 'top',
                 type: 'warn'
             });
         }
-
         function invalidEmailNotify() {
             ngNotify.set('please use a valid email!', {
                 position: 'top',
                 type: 'warn'
             });
         }
-
         function invalidEmail() {
             return vm.form.$error.email
         }
@@ -58,14 +55,14 @@
             } else if (invalidEmail()) {
                 invalidEmailNotify();
             } else {
-                $http.post('api/createAccount', data).success(function (info, status) {
+                $http.post('/createAccount', data).success(function (info, status) {
                     //when register is done, log the user in
                     //trigger success popup then login in
                     AuthenticationService.login(data, null);
                 }).error(function (data, status) {
                     //console.error(data);
                     if (data.status == 'duplicate username') {
-                        usernameExist();
+                        usernameExistNotify();
                     } else if (data.status == 'duplicate email') {
                         emailExistNotify();
                     }

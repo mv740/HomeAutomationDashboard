@@ -23,7 +23,6 @@
 
         authService.login = function (data, resetForm) {
             //console.log(data);
-
             $http.post('/login', data)
                 .success(function (info, status, headers, config) {
                     SessionService.authenticated = true;
@@ -39,14 +38,11 @@
 
                 .error(function (info, status, headers, config) {
                     SessionService.authenticated = false;
-                    if(resetForm != null)
-                    {
+                    if (resetForm != null) {
                         resetForm();
                     }
                     failedAuthNotification();
                 })
-
-
         };
         authService.logout = function () {
 
@@ -78,6 +74,28 @@
 
         authService.getUserName = function () {
             return $rootScope.globals.user;
+        };
+
+        authService.resetPassword = function(data, notification)
+        {
+            $http.post('/forgot', data)
+                .success(function (data, status, headers, config) {
+                    notification.success();
+                })
+                .error(function (data, status, headers, config) {
+                    notification.fail();
+                })
+        };
+
+        authService.saveResetPassword = function(data, notification)
+        {
+            $http.post('/reset', data)
+                .success(function (data, status, headers, config) {
+                    notification.success();
+                })
+                .error(function (data, status, headers, config) {
+                    notification.fail();
+                })
         };
 
         authService.register = function(){

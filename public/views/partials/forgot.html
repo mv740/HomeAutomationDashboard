@@ -1,0 +1,23 @@
+<div class="margin30">
+    <div style="width: 20rem; background: white; margin-left: auto; margin-right: auto">
+        <div class="login-form padding20 block-shadow" ng-controller="ResetController as ctrl">
+
+            <form name="ctrl.form" novalidate ng-submit="ctrl.resetPassword(ctrl.account)" >
+                <h1 class="text-light">Forgot Password</h1>
+                <hr class="thin bg-green"/>
+                <br />
+                <div class="input-control text full-size" data-role="input">
+                    <span class="mif-mail prepend-icon"></span>
+                    <input type="email" id="reset_email" name="reset_email" placeholder="Email" ng-model="ctrl.account.email"  required>
+                    <button class="button helper-button clear"><span class="mif-cross"></span></button>
+                </div>
+                <br />
+                <br />
+                <div class="form-actions">
+                    <button type="submit" class="button success" ng-disabled="!ctrl.form.$valid">Submit</button>
+                </div>
+            </form>
+        </div>
+        <button class="button link full-size fg-gray" ui-sref="login" style="text-align: center">Go back</button>
+    </div>
+</div>

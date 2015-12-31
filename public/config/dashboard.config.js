@@ -1,37 +1,62 @@
 /**
  * Created by micha on 10/18/2015.
  */
-(function()
-{
+
+//todo not sure if i will keep it... need to read more about this
+var interceptor = function ($q, $injector) {
+    return {
+        request: function (config) {
+            console.log(config);
+            return config;
+        },
+
+        response: function (result) {
+            console.log(result);
+            return result;
+        },
+
+        responseError: function (rejection) {
+            console.log('Failed with', rejection.status, 'status');
+            if (rejection.status == 403) {
+                console.error(rejection.status);
+                // $state.go('/login');
+                $injector.get('$state').go('/login')
+            }
+            return $q.reject(rejection);
+        }
+
+    }
+
+};
+
+(function () {
     'use strict';
     angular
         .module('Dashboard')
         .config(config)
         .run(run);
 
-    config.$inject = ['$stateProvider', '$urlRouterProvider', '$locationProvider'];
+    config.$inject = ['$stateProvider', '$urlRouterProvider', '$locationProvider', '$httpProvider'];
 
-    function config($stateProvider, $urlRouterProvider, $locationProvider) {
-        $locationProvider.html5Mode(true);
+    function config($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
+        $httpProvider.interceptors.push(interceptor);
+
         $urlRouterProvider.otherwise('/home');
-
         //routing
         $stateProvider
-            //Home State
             .state('home', {
                 url: '/home',
-                templateUrl: '/public/views/partials/home.html',
+                templateUrl: 'public/views/partials/home.html',
                 authenticate: false
             })
-            // Service State
             .state('service', {
                 url: '/service',
-                templateUrl: '/public/views/partials/service.html',
+                templateUrl: 'public/views/partials/service.html',
                 authenticate: true
             })
             .state('demo', {
                 url: '/demo',
-                templateUrl: '/public/views/demo.html',
+                templateUrl: 'public/views/demo.html',
                 authenticate: false
             })
             .state('login', {
@@ -39,23 +64,30 @@
                 templateUrl: '/public/views/partials/login.html',
                 authenticate: false
             })
+            .state('forgot', {
+                url: '/forgot',
+                templateUrl: 'public/views/partials/forgot.html',
+                authenticate: false
+            })
             .state('register', {
                 url: '/register',
-                templateUrl: '/public/views/partials/register.html',
+                templateUrl: 'public/views/partials/register.html',
                 authenticate: false
             })
             .state('account', {
                 url: '/account',
-                templateUrl: '/public/views/partials/account.html',
+                templateUrl: 'public/views/partials/account.html',
                 authenticate: true
             })
+            .state('reset', {
+                url: '/reset',
+                templateUrl: 'public/views/partials/reset-password.html',
+                authenticate: false
+            });
+        $locationProvider.html5Mode(true);
     }
-
-                    //['$rootScope', '$state', 'AuthenticationService'];
-    //add AuthenticationService when service will be create later on
-    run.$inject = ['$rootScope', '$state', 'AuthenticationService', '$cookieStore','$cookies'];
-    function run($rootScope, $state, AuthenticationService, $cookieStore, $cookies) {
-
+    run.$inject = ['$rootScope', '$state', 'AuthenticationService', '$cookies'];
+    function run($rootScope, $state, AuthenticationService, $cookies) {
         $rootScope.globals = $cookies.getObject('globals');
 
         $rootScope.$on("$stateChangeStart",
@@ -66,5 +98,4 @@
                 }
             })
     }
-    //continue authentication coding http://jasonwatmore.com/post/2014/05/26/AngularJS-Basic-HTTP-Authentication-Example.aspx
 })();

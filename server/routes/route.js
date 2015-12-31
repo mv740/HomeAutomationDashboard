@@ -25,7 +25,6 @@ require('../../server/models/member');
 var MemberModel = mongoose.model('MemberModel');
 
 
-
 var passport = require('../../server/config/authentication.js')(router);
 
 router.post('/login', function (req, res, next) {
@@ -46,12 +45,11 @@ router.get('/hello', passport.ensureAuthenticated, function (req, res) {
 });
 
 
-
 //router.use(isAuthenticated);
 
 
 //Frontend routes ==============================================================================================
-var rootDirectoryPath = {root: __dirname +'/../../'};
+var rootDirectoryPath = {root: __dirname + '/../../'};
 
 /* GET home page. */
 router.get('/', function (request, response) {
@@ -60,7 +58,7 @@ router.get('/', function (request, response) {
 });
 
 router.get('/metro', function (request, response) {
-    response.sendFile('public/metro.html',rootDirectoryPath);
+    response.sendFile('public/metro.html', rootDirectoryPath);
 });
 router.get('/flexmetro', function (request, response) {
     response.sendFile('public/flexmetro.html', rootDirectoryPath);
@@ -68,7 +66,7 @@ router.get('/flexmetro', function (request, response) {
 
 // LIST DIRECTIVE DATABASE TESTING ////////////////////////////////////////////////////////////////
 
-router.get('/api/list/',passport.ensureAuthenticated, function (request, response) {
+router.get('/api/list/', passport.ensureAuthenticated, function (request, response) {
 
     MemberModel.findOne({username: request.user.username}, function (err, member) {
 
@@ -138,12 +136,182 @@ router.post('/api/insertService', function (req, res) {
     database.insertService(req, res);
 });
 
-router.post('/api/createAccount', function (req, res) {
+var Promise = require("bluebird");
+var crypto = Promise.promisifyAll(require('crypto'));
+var nodemailer = require('nodemailer');
+var generateResetPasswordToken = function (email, req, res) {
+
+    return generateRandomBytes()
+        .then(BytesToHexString)
+        .then(saveToken);
+    //.then(sendResetEmail);
+
+    function generateRandomBytes() {
+        return crypto.randomBytesAsync(32);
+    }
+
+    function BytesToHexString(buf) {
+        return buf.toString('hex');
+    }
+
+    //todo refactor this to extract smtp configs and make this like a service function
+    function sendResetEmail(data) {
+
+        var smtp = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                //todo create a email for this project
+                user: '...',
+                pass: '...'
+            }
+        });
+        var mailOptions = {
+            to: data.email,
+            from: 'passwordreset@demo.com',
+            subject: 'Node.js Password Reset',
+            text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+            'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+            'https://' + req.headers.host + '/reset/' + data.token + '\n\n' +
+            'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+        };
+        smtp.sendMail(mailOptions, function (error) {
+            if (error) {
+                console.error(error);
+            } else {
+                res.send({'msg': 'reset process started for  ' + email});
+            }
+        });
+    }
+
+    function saveToken(token, callback) {
+
+        //check if user exist
+        MemberModel.findOne({email: email}, function (err, user) {
+            if (!user) {
+                res.status(409).send({error: 'No account with that email address exists.'})
+            } else {
+
+                //console.log(token);
+                user.resetPasswordToken = token;
+                user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+                var data = {
+                    'token': token,
+                    'email': user.email
+                };
+
+                user.save(function (error) {
+                    if (error) {
+                        res.status(409).send({'error': 'reset process failed to start'});
+                    } else
+                        sendResetEmail(data);
+                });
+            }
+        });
+        //return {'test':'wtf'}
+
+
+    }
+
+
+};
+
+router.post('/forgot', function (req, res) {
+    var email = req.body.email;
+    generateResetPasswordToken(email, req, res);
+});
+
+router.get('/reset/:token', function (req, res) {
+    console.log('hello');
+    MemberModel.findOne({
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: {$gt: Date.now()}
+    }, function (err, user) {
+        if (!user) {
+            console.error('wrong token');
+        } else {
+            req.session.token = req.params.token;
+            res.redirect('/reset');
+            //res.sendFile('public/views/partials/reset-password.html', rootDirectoryPath);
+            //res.sendFile('public/views/partials/reset-password.html', rootDirectoryPath);
+        }
+    });
+});
+
+function passwordResetEmailConfirmation(email) {
+
+    var smtp = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: '...',
+            pass: '...'
+        }
+    });
+    var mailOptions = {
+        to: email,
+        from: 'passwordreset@MyDashboard.com',
+        subject: 'Your password has been changed',
+        text: 'Hello,\n\n' +
+        'This is a confirmation that the password for your account ' + email + ' has just been changed.\n'
+    };
+    smtp.sendMail(mailOptions, function (error) {
+        if (error) {
+            console.error(error);
+        }
+    });
+}
+
+router.post('/reset/', function (req, res) {
+    MemberModel.findOne({
+        resetPasswordToken: req.session.token,
+        resetPasswordExpires: {$gt: Date.now()}
+    }, function (err, user) {
+        if (!user) {
+            res.status(403).send({'error': 'Password reset token is invalid or has expired.'});
+        } else {
+
+            var callback = function(hash)
+            {
+                console.log("here: " +hash);
+                user.password = hash;
+                user.resetPasswordToken = undefined;
+                user.resetPasswordExpires = undefined;
+
+                user.save(function (err) {
+                    if(err)
+                        console.error(err);
+                });
+                res.end();
+            };
+            MemberModel.generatePassHash(req.body.newPassword,callback);
+            passwordResetEmailConfirmation(user.email);
+        }
+    });
+});
+
+//router.post('/test', function (req, res) {
+//    //todo http://sahatyalkabov.com/how-to-implement-password-reset-in-nodejs/
+//    function
+//
+//    MemberModel.findOne({email: req.body.email}, function(err, user)
+//    {
+//        if(!user)
+//        {
+//            res.status(409).send({'error':'No account with that email address exists.'})
+//        }else
+//        {
+//            user.resetPasswordToken = token
+//        }
+//    })
+//});
+
+router.post('/createAccount', function (req, res) {
     database.createAccount(req, res);
 });
 
+
 router.post('/api/updateService', function (req, res) {
-  database.updateService(req,res);
+    database.updateService(req, res);
 });
 
 
@@ -158,8 +326,9 @@ router.post('/api/deleteService', function (req, res) {
 //Not found ROUTING ===========================================================================================
 
 //if url query doesn't match any previous router.get then it will go here and redirect to main page
-router.get('*', function (req, res) {
-    res.redirect('/')
+router.get('/*', function (req, res) {
+    console.error(req.session.token);
+    res.sendFile('/public/views/index.html', rootDirectoryPath);
 });
 
 module.exports = router;

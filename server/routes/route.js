@@ -135,7 +135,7 @@ router.get('/api/list/serviceType', function (request, response) {
 router.post('/api/insertService', function (req, res) {
     database.insertService(req, res);
 });
-
+var account = require('../config/email');
 var Promise = require("bluebird");
 var crypto = Promise.promisifyAll(require('crypto'));
 var nodemailer = require('nodemailer');
@@ -159,11 +159,7 @@ var generateResetPasswordToken = function (email, req, res) {
 
         var smtp = nodemailer.createTransport({
             service: 'gmail',
-            auth: {
-                //todo create a email for this project
-                user: '...',
-                pass: '...'
-            }
+            auth: account
         });
         var mailOptions = {
             to: data.email,
@@ -242,10 +238,7 @@ function passwordResetEmailConfirmation(email) {
 
     var smtp = nodemailer.createTransport({
         service: 'gmail',
-        auth: {
-            user: '...',
-            pass: '...'
-        }
+        auth: account
     });
     var mailOptions = {
         to: email,
@@ -270,21 +263,16 @@ router.post('/reset/', function (req, res) {
             res.status(403).send({'error': 'Password reset token is invalid or has expired.'});
         } else {
 
-            var callback = function(hash)
-            {
-                console.log("here: " +hash);
-                user.password = hash;
-                user.resetPasswordToken = undefined;
-                user.resetPasswordExpires = undefined;
+            user.password = req.body.newPassword;
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
 
-                user.save(function (err) {
-                    if(err)
-                        console.error(err);
-                });
+            user.save(function (err) {
+                if (err)
+                    console.error(err);
+                passwordResetEmailConfirmation(user.email);
                 res.end();
-            };
-            MemberModel.generatePassHash(req.body.newPassword,callback);
-            passwordResetEmailConfirmation(user.email);
+            });
         }
     });
 });
@@ -327,7 +315,7 @@ router.post('/api/deleteService', function (req, res) {
 
 //if url query doesn't match any previous router.get then it will go here and redirect to main page
 router.get('/*', function (req, res) {
-    console.error(req.session.token);
+    //console.error(req.session.token);
     res.sendFile('/public/views/index.html', rootDirectoryPath);
 });
 

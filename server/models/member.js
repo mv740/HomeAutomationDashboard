@@ -33,15 +33,17 @@ var Member = new Schema(
 //https://github.com/ncb000gt/node.bcrypt.js
 Member.statics.generatePassHash = function (password, callback) {
     bcrypt.hash(password, 10, function (err, hash) {
-        console.log("member function hash : " +hash);
         callback(hash);
     })
 };
 
 Member.pre('save', function (next) {
-    var newMember = this;
-    bcrypt.hash(newMember.password, 10, function (err, hash) {
-        newMember.password = hash;
+    var member = this;
+    var SALT_FACTOR = 10;
+    if (!member.isModified('password'))
+        return next();
+    bcrypt.hash(member.password, SALT_FACTOR, function (err, hash) {
+        member.password = hash;
         next();
     });
 });

@@ -35,6 +35,7 @@ module.exports = function (app) {
                     if (isMatch) {
                         return done(null, user);
                     } else {
+                        console.error(password);
                         return done(null, false, {message: 'Incorrect password.'});
                     }
                 })

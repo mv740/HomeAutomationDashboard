@@ -3,31 +3,31 @@
  */
 
 //todo not sure if i will keep it... need to read more about this
-var interceptor = function ($q, $injector) {
-    return {
-        request: function (config) {
-            console.log(config);
-            return config;
-        },
-
-        response: function (result) {
-            console.log(result);
-            return result;
-        },
-
-        responseError: function (rejection) {
-            console.log('Failed with', rejection.status, 'status');
-            if (rejection.status == 403) {
-                console.error(rejection.status);
-                // $state.go('/login');
-                $injector.get('$state').go('/login')
-            }
-            return $q.reject(rejection);
-        }
-
-    }
-
-};
+//var interceptor = function ($q, $injector) {
+//    return {
+//        request: function (config) {
+//            console.log(config);
+//            return config;
+//        },
+//
+//        response: function (result) {
+//            console.log(result);
+//            return result;
+//        },
+//
+//        responseError: function (rejection) {
+//            console.log('Failed with', rejection.status, 'status');
+//            if (rejection.status == 403) {
+//                console.error(rejection.status);
+//                // $state.go('/login');
+//                $injector.get('$state').go('/login')
+//            }
+//            return $q.reject(rejection);
+//        }
+//
+//    }
+//
+//};
 
 (function () {
     'use strict';
@@ -39,13 +39,13 @@ var interceptor = function ($q, $injector) {
     config.$inject = ['$stateProvider', '$urlRouterProvider', '$locationProvider', '$httpProvider'];
 
     function config($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
-        $httpProvider.interceptors.push(interceptor);
+       // $httpProvider.interceptors.push(interceptor);
 
         $urlRouterProvider.otherwise('/home');
         //routing
         $stateProvider
             .state('home', {
-                url: '/home',
+                url: '/',
                 templateUrl: 'public/views/partials/home.html',
                 authenticate: false
             })
@@ -57,7 +57,7 @@ var interceptor = function ($q, $injector) {
             .state('demo', {
                 url: '/demo',
                 templateUrl: 'public/views/demo.html',
-                authenticate: false
+                authenticate: true
             })
             .state('login', {
                 url: '/login',

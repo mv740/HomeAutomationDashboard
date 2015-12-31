@@ -15,9 +15,6 @@
         var vm = this;
         vm.error = false;
 
-
-        //http://jasonwatmore.com/post/2014/05/26/AngularJS-Basic-HTTP-Authentication-Example.aspx
-
         function resetForm()
         {
             vm.error = true;

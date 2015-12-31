@@ -61,8 +61,7 @@
                     //console.log((response.data));
                     vm.table = response.data;
                     vm.tableResult = response.data;
-                    console.log(vm.table);
-
+                    //console.log(vm.table);
                     vm.status = "Loading";
                 });
             $http.get('/api/list/serviceType', function (request, response) {

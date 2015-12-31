@@ -9,11 +9,10 @@
         .module('Dashboard')
         .controller('RegisterController', RegisterController);
 
-    RegisterController.$inject = ['AuthenticationService', '$cookies', 'ngNotify', '$http'];
+    RegisterController.$inject = ['AuthenticationService', 'ngNotify'];
 
-    function RegisterController(AuthenticationService, $cookies, ngNotify, $http) {
+    function RegisterController(AuthenticationService, ngNotify) {
         var vm = this;
-
 
         function passwordMatch() {
             return (vm.account.password == vm.account.passwordConfirmation)
@@ -48,6 +47,10 @@
             });
         }
 
+        var notfiyError = {
+            'usernameExist' : usernameExistNotify,
+            'emailExist': emailExistNotify
+        };
 
         vm.register = function (data) {
             if (!passwordMatch()) {
@@ -55,20 +58,7 @@
             } else if (invalidEmail()) {
                 invalidEmailNotify();
             } else {
-                $http.post('/createAccount', data).success(function (info, status) {
-                    //when register is done, log the user in
-                    //trigger success popup then login in
-                    AuthenticationService.login(data, null);
-                }).error(function (data, status) {
-                    //console.error(data);
-                    if (data.status == 'duplicate username') {
-                        usernameExistNotify();
-                    } else if (data.status == 'duplicate email') {
-                        emailExistNotify();
-                    }
-                });
-
-
+                AuthenticationService.registration(data,notfiyError);
             }
         };
 

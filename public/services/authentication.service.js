@@ -8,59 +8,60 @@
         .module('Dashboard')
         .factory('AuthenticationService', AuthenticationService);
 
-    AuthenticationService.$inject = ['$http', 'SessionService', '$location', '$rootScope', '$cookies', 'ngNotify'];
+    AuthenticationService.$inject = ['$http', 'SessionService', '$state', '$rootScope', '$cookies', 'ngNotify'];
 
-    function AuthenticationService($http, SessionService, $location, $rootScope, $cookies, ngNotify) {
+    function AuthenticationService($http, SessionService, $state, $rootScope, $cookies, ngNotify) {
 
         var authService = {};
 
-        function failedAuthNotification(){
+        function failedAuthNotification() {
             ngNotify.set('Authentication Failed, please try again!', {
                 position: 'top',
-                type : 'error'
+                type: 'error'
             });
         }
 
         authService.login = function (data, resetForm) {
-            //console.log(data);
-            $http.post('/login', data)
-                .success(function (info, status, headers, config) {
+            $http.get('/login', data)
+                .then(function success(response) {
                     SessionService.authenticated = true;
                     SessionService.user = data.username;
-                    //console.log(SessionService);
-
                     $rootScope.globals = SessionService;
                     $cookies.putObject('globals', SessionService);
-
-                    //console.log(info);
-                    $location.path("/demo");
-                })
-
-                .error(function (info, status, headers, config) {
+                    $state.go("demo");
+                }, function error(error) {
                     SessionService.authenticated = false;
                     if (resetForm != null) {
                         resetForm();
                     }
                     failedAuthNotification();
-                })
+                });
         };
         authService.logout = function () {
-
-            $http.get('/logout', function (request, response) {
-                var tag = request.params.tag;
-                particle.getTemperature(tag, function (value) {
-                    response.send(value);
+            $http.get('/logout')
+                .then(function success(data) {
+                    $cookies.remove("globals");
+                    delete $rootScope.globals;
+                    $cookies.remove("connect.sid"); //cookie api
+                    $state.go('home');
+                }, function error(error) {
+                    console.error(error);
                 });
-            }).success(function (info, status) {
-                console.log(status);
-                $cookies.remove("globals");
-                delete $rootScope.globals;
-                $cookies.remove("connect.sid"); //cookie api
-                $location.path('/home')
-            }).error(function (info, status) {
-                console.log(status);
-            });
+        };
 
+        authService.registration = function (data, notify) {
+            $http.post('/createAccount', data)
+                .then(function success(response) {
+                    //when register is done, log the user in
+                    authService.login(data, null);
+                }, function error(error) {
+                    console.error(error);
+                    if (error.data.status == 'duplicate username') {
+                        notify.usernameExist();
+                    } else if (error.data.status == 'duplicate email') {
+                        notify.emailExist();
+                    }
+                });
         };
 
 
@@ -76,30 +77,26 @@
             return $rootScope.globals.user;
         };
 
-        authService.resetPassword = function(data, notification)
-        {
+        authService.resetPassword = function (data, notification) {
             $http.post('/forgot', data)
-                .success(function (data, status, headers, config) {
+                .then(function success(data) {
                     notification.success();
-                })
-                .error(function (data, status, headers, config) {
+                }, function error(error) {
                     notification.fail();
-                })
+                });
         };
 
-        authService.saveResetPassword = function(data, notification)
-        {
+        authService.saveResetPassword = function (data, notification) {
             $http.post('/reset', data)
-                .success(function (data, status, headers, config) {
+                .then(function success(data) {
                     notification.success();
-                })
-                .error(function (data, status, headers, config) {
+                }, function error(error) {
                     notification.fail();
-                })
+                });
         };
 
-        authService.register = function(){
-          $http.post('')
+        authService.register = function () {
+            $http.post('')
         };
 
         return authService;

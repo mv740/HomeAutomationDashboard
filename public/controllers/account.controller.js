@@ -25,10 +25,10 @@
             url: 'public/account-username.html'
         }, {
             title: 'Change Password',
-            url: 'public/account-password.html'
+            url: 'public/views/partials/account-password.html'
         }];
 
-        vm.currentTab = 'public/account-username.html';
+        vm.currentTab = 'public/views/partials/account-username.html';
 
         vm.onClickTab = function (tab) {
             vm.currentTab = tab.url;
@@ -41,11 +41,11 @@
 
 
         vm.items = [
-            { title: 'Change username', url: 'public/account-username.html'},
-            { title: 'Change password', url: 'public/account-password.html'}
+            { title: 'Change username', url: 'public/views/partials/account-username.html'},
+            { title: 'Change password', url: 'public/views/partials/account-password.html'}
         ];
 
-        vm.activePanel = 'public/account-username.html';
+        vm.activePanel = 'public/views/partials/account-username.html';
 
         vm.showPanel = function(url) {
             vm.activePanel = url;

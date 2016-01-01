@@ -52,7 +52,8 @@
             .state('service', {
                 url: '/service',
                 templateUrl: 'public/views/partials/service.html',
-                authenticate: true
+                authenticate: true,
+                controller : 'ServicesController as ctrl'
             })
             .state('demo', {
                 url: '/demo',
@@ -62,27 +63,32 @@
             .state('login', {
                 url: '/login',
                 templateUrl: '/public/views/partials/login.html',
-                authenticate: false
+                authenticate: false,
+                controller : "LoginController as ctrl"
             })
             .state('forgot', {
                 url: '/forgot',
                 templateUrl: 'public/views/partials/forgot.html',
-                authenticate: false
+                authenticate: false,
+                controller : "ResetController as ctrl"
             })
             .state('register', {
                 url: '/register',
                 templateUrl: 'public/views/partials/register.html',
-                authenticate: false
+                authenticate: false,
+                controller : 'RegisterController as ctrl'
             })
             .state('account', {
                 url: '/account',
                 templateUrl: 'public/views/partials/account.html',
-                authenticate: true
+                authenticate: true,
+                controller : "AccountController as ctrl"
             })
             .state('reset', {
                 url: '/reset',
                 templateUrl: 'public/views/partials/reset-password.html',
-                authenticate: false
+                authenticate: false,
+                controller : "ResetController as ctrl"
             });
         $locationProvider.html5Mode(true);
     }

@@ -22,7 +22,7 @@
         }
 
         authService.login = function (data, resetForm) {
-            $http.get('/login', data)
+            $http.post('/login', data)
                 .then(function success(response) {
                     SessionService.authenticated = true;
                     SessionService.user = data.username;

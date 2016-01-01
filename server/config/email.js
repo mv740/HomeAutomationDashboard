@@ -4,6 +4,11 @@
 
 //email account for nodemailer
 module.exports = {
-    user : 'michalwozniak06@gmail.com',
-    pass: 'Wozm__69'
+
+    service: 'gmail',
+    account: {
+        user: 'mydashboardsystem@gmail.com',
+        pass: 'Q1w2e3r4t5y6u7'
+    }
+
 };

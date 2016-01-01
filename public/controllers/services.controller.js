@@ -35,12 +35,7 @@
         vm.serviceCurrent = {};
 
         function loadServiceViewTable() {
-            $http.get('/api/listView/', function (request, response) {
-                var tag = request.params.tag;
-                particle.getTemperature(tag, function (value) {
-                    response.send(value);
-                });
-            }).
+            $http.get('/listView/').
                 then(function (response) {
                     // this callback will be called asynchronously
                     // when the response is available
@@ -49,38 +44,20 @@
                 });
         }
         function loadTable() {
-            $http.get('/api/list/', function (request, response) {
-                var tag = request.params.tag;
-                particle.getTemperature(tag, function (value) {
-                    response.send(value);
-                });
-            }).
+            $http.get('/list/').
                 then(function (response) {
-                    // this callback will be called asynchronously
-                    // when the response is available
-                    //console.log((response.data));
                     vm.table = response.data;
                     vm.tableResult = response.data;
-                    //console.log(vm.table);
                     vm.status = "Loading";
                 });
-            $http.get('/api/list/serviceType', function (request, response) {
-                var tag = request.params.tag;
-                particle.getTemperature(tag, function (value) {
-                    response.send(value);
-                });
-            }).
-                then(function (response) {
+            $http.get('/api/list/serviceType')
+                .then(function (response) {
                     // this callback will be called asynchronously
                     // when the response is available
                     console.log((response.data));
                     vm.serviceInfo = response.data;
                     vm.serviceTypeOption = vm.serviceInfo;
-                    //default value
-                    //vm.service.type = vm.serviceInfo[1].serviceType;
                 });
-
-
         }
         function changeHide(service) {
             $http.post("/api/hideService", service)

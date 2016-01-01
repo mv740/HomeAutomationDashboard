@@ -9,7 +9,10 @@ var MemberModel = mongoose.model('MemberModel');
 require('./../models/service');
 var ServiceModel = mongoose.model('ServiceModel');
 
-
+var account = require('../config/email');
+var Promise = require("bluebird");
+var crypto = Promise.promisifyAll(require('crypto'));
+var nodemailer = require('./email');
 
 
 exports.initializeServices = function (db, mongoose) {
@@ -247,23 +250,22 @@ exports.createAccount = function (req, res) {
 
             var ServicesList = require('./../models/service.config.js');
             var serviceList = [];
-            ServicesList.forEach(function(service)
-            {
+            ServicesList.forEach(function (service) {
                 var serviceItem =
-                    {
-                        "serviceType": service.name,
-                        "service": []
-                    };
+                {
+                    "serviceType": service.name,
+                    "service": []
+                };
 
                 serviceList.push(serviceItem);
             });
-            
+
             var newMember = new MemberModel(
                 {
                     "username": username,
                     "password": pass,
-                    "email" : email,
-                    "ServiceSetting" : serviceList
+                    "email": email,
+                    "ServiceSetting": serviceList
                 }
             );
 
@@ -271,12 +273,12 @@ exports.createAccount = function (req, res) {
             newMember.save(function (error, newAccount) {
                 if (error) {
                     //duplicate key
-                    if(error.code == 11000){
+                    if (error.code == 11000) {
                         res.status(409).send({'error': 'this email is already used!', status: 'duplicate email'});
                         //console.log(error.code)
                     }
                     //return console.error(error);
-                }else
+                } else
                     res.send({'msg': 'created user ' + username})
             });
             //
@@ -286,3 +288,105 @@ exports.createAccount = function (req, res) {
     })
 };
 
+exports.resetPassword = function (req, res) {
+    MemberModel.findOne({
+        resetPasswordToken: req.session.token,
+        resetPasswordExpires: {$gt: Date.now()}
+    }, function (err, user) {
+        if (!user) {
+            res.status(403).send({'error': 'Password reset token is invalid or has expired.'});
+        } else {
+
+            user.password = req.body.newPassword;
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+
+            user.save(function (err) {
+                if (err)
+                    console.error(err);
+                passwordResetEmailConfirmation(user.email);
+                res.end();
+            });
+        }
+    });
+
+    function passwordResetEmailConfirmation(email) {
+        var message = nodemailer.emailMessage();
+        var newMessage = message
+            .to(email)
+            .from('passwordreset@demo.com')
+            .subject('Your password has been changed')
+            .text('Hello,\n\n' +
+                'This is a confirmation that the password for your account ' + email + ' has just been changed.\n')
+            .build();
+        nodemailer.send(newMessage);
+    }
+};
+
+exports.generateResetPasswordToken = function (email, req, res) {
+
+    return generateRandomBytes()
+        .then(BytesToHexString)
+        .then(saveToken);
+
+
+    function generateRandomBytes() {
+        return crypto.randomBytesAsync(32);
+    }
+
+    function BytesToHexString(buf) {
+        return buf.toString('hex');
+    }
+
+    function sendResetEmail(data) {
+
+        var message = nodemailer.emailMessage();
+        var newMessage = message
+            .to(data.email)
+            .from('passwordreset@demo.com')
+            .subject('Node.js Password Reset')
+            .text('You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+                'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                'https://' + req.headers.host + '/reset/' + data.token + '\n\n' +
+                'If you did not request this, please ignore this email and your password will remain unchanged.\n')
+            .build();
+        nodemailer.send(newMessage);
+    }
+
+    function saveToken(token) {
+        //check if user exist
+        MemberModel.findOne({email: email}, function (err, user) {
+            if (!user) {
+                res.status(409).send({error: 'No account with that email address exists.'})
+            } else {
+                user.resetPasswordToken = token;
+                user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+                var data = {
+                    'token': token,
+                    'email': user.email
+                };
+                user.save(function (error) {
+                    if (error) {
+                        res.status(409).send({'error': 'reset process failed to start'});
+                    } else
+                        sendResetEmail(data);
+                        res.end();
+                });
+            }
+        });
+    }
+};
+
+exports.validateResetToken = function (req,res) {
+    MemberModel.findOne({
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: {$gt: Date.now()}
+    }, function (err, user) {
+        if (!user) {
+            console.error('wrong token');
+        } else {
+            req.session.token = req.params.token;
+            res.redirect('/reset');
+        }
+    });
+}

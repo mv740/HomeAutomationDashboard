@@ -1,11 +1,11 @@
 /**
  * Created by michal on 12/28/2015.
  */
+'use strict';
 //================================== routes for PRTG API ====================================
 var prtg = require('../../server/controllers/prtg');
 var express = require('express');
 
-'use strict';
 var api = express.Router();
 
 api.get('/sensorDetails/:id', function (request, response) {
@@ -92,4 +92,4 @@ api.get('/graph/:id/:hide?', function (request, response) {
     });
 });
 
-module.exports =  api;
+module.exports = api;

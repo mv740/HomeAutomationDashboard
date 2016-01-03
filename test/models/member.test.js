@@ -20,7 +20,7 @@ describe('Member : models', function () {
                 //confirm hash is not null
                 should.exist(hash);
                 done();
-            })
+            });
         });
     });
     describe('#comparePassword()', function(){

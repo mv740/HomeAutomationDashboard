@@ -2,6 +2,9 @@
  * Created by michal on 10/21/2015.
  * Database queries
  */
+
+'use strict';
+
 var mongoose = require('mongoose');
 require('./../models/member');
 var MemberModel = mongoose.model('MemberModel');
@@ -19,6 +22,15 @@ exports.initializeServices = function () {
     var db = mongoose.connection;
     var ServicesList = require('./../models/service.config.js');
 
+
+    function onInsert(err, docs) {
+        if (err) {
+            console.error(err);
+        } else {
+            console.info('services were successfully created!', docs.length);
+        }
+    }
+
     db.on('open', function () {
         mongoose.connection.db.listCollections({name: 'service'}).toArray(function (err, foundCollection) {
             if (err) {
@@ -26,16 +38,9 @@ exports.initializeServices = function () {
             }
             else {
                 //console.log(foundCollection);
-                if (foundCollection.length != 1) {
+                if (foundCollection.length !== 1) {
                     //not found then doesn't exist
                     ServiceModel.collection.insert(ServicesList, onInsert);
-                    function onInsert(err, docs) {
-                        if (err) {
-                            // TODO: handle error
-                        } else {
-                            console.info('services were successfully created!', docs.length);
-                        }
-                    }
                 }
             }
         });
@@ -90,7 +95,7 @@ exports.updateService = function (req, res) {
     var currentUser = req.user.username;
 
     // type not changed, name changed
-    if (newServiceName != currentServiceName && newType === currentType) {
+    if (newServiceName !== currentServiceName && newType === currentType) {
 
         var query = {
 
@@ -105,12 +110,12 @@ exports.updateService = function (req, res) {
                 var foundTypeRow;
                 var foundNameRow;
                 for (var x = 0; x < model.ServiceSetting.length; x++) {
-                    if (model.ServiceSetting[x].serviceType == currentType) {
+                    if (model.ServiceSetting[x].serviceType === currentType) {
                         foundTypeRow = x;
                     }
                 }
                 for (var y = 0; y < model.ServiceSetting[foundTypeRow].service.length; y++) {
-                    if (model.ServiceSetting[foundTypeRow].service[y].serviceName == currentServiceName) {
+                    if (model.ServiceSetting[foundTypeRow].service[y].serviceName === currentServiceName) {
                         foundNameRow = y;
                     }
                 }
@@ -123,15 +128,15 @@ exports.updateService = function (req, res) {
                     update,
                     function (err) {
                         console.log("updateService used");
-                        if (err != null) {
-                            console.log("updateService Error : " + err)
+                        if (err !== null) {
+                            console.log("updateService Error : " + err);
                         }
                     });
 
             });
         res.end();
 
-    } else if (currentType != newType) {
+    } else if (currentType !== newType) {
         //delete old one
         var currentService = {
             serviceName: currentServiceName
@@ -150,7 +155,7 @@ exports.updateService = function (req, res) {
 
         //insert new one with new type and check if we need to update the service name
         var newService = {
-            serviceName: (newServiceName == currentServiceName) ? currentServiceName : newServiceName,
+            serviceName: (newServiceName === currentServiceName) ? currentServiceName : newServiceName,
             serviceHide: false
         };
         //The $push operator appends a specified value to an array.
@@ -158,13 +163,13 @@ exports.updateService = function (req, res) {
             {$push: {"ServiceSetting.$.service": newService}},
             function (err, model) {
                 console.log("updateService used");
-                if (err != null) {
-                    console.log("updateService Error : " + err)
+                if (err !== null) {
+                    console.log("updateService Error : " + err);
                 }
             });
         res.end();
     } else {
-        res.end()
+        res.end();
     }
 };
 
@@ -205,12 +210,12 @@ exports.hideServices = function (req, res) {
             var foundTypeRow;
             var foundNameRow;
             for (var x = 0; x < model.ServiceSetting.length; x++) {
-                if (model.ServiceSetting[x].serviceType == serviceType) {
+                if (model.ServiceSetting[x].serviceType === serviceType) {
                     foundTypeRow = x;
                 }
             }
             for (var y = 0; y < model.ServiceSetting[foundTypeRow].service.length; y++) {
-                if (model.ServiceSetting[foundTypeRow].service[y].serviceName == serviceName) {
+                if (model.ServiceSetting[foundTypeRow].service[y].serviceName === serviceName) {
                     foundNameRow = y;
                 }
             }
@@ -223,8 +228,8 @@ exports.hideServices = function (req, res) {
                 update,
                 function (err) {
                     console.log("hideServices used");
-                    if (err != null) {
-                        console.log("hideServices Error : " + err)
+                    if (err !== null) {
+                        console.log("hideServices Error : " + err);
                     }
                 });
         });
@@ -266,19 +271,20 @@ exports.createAccount = function (req, res) {
             newMember.save(function (error, newAccount) {
                 if (error) {
                     //duplicate key
-                    if (error.code == 11000) {
+                    if (error.code === 11000) {
                         res.status(409).send({'error': 'this email is already used!', status: 'duplicate email'});
                         //console.log(error.code)
                     }
                     //return console.error(error);
-                } else
-                    res.send({'msg': 'created user ' + username})
+                } else {
+                    res.send({'msg': 'created user ' + username});
+                }
             });
             //
-        } else
+        } else {
             res.status(409).send({'error': 'this user already exist!', status: 'duplicate username'})
-
-    })
+        }
+    });
 };
 
 exports.resetPassword = function (req, res) {
@@ -350,7 +356,7 @@ exports.generateResetPasswordToken = function (email, req, res) {
         //check if user exist
         MemberModel.findOne({email: email}, function (err, user) {
             if (!user) {
-                res.status(409).send({error: 'No account with that email address exists.'})
+                res.status(409).send({error: 'No account with that email address exists.'});
             } else {
                 user.resetPasswordToken = token;
                 user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
@@ -382,4 +388,4 @@ exports.validateResetToken = function (req, res) {
             res.redirect('/reset');
         }
     });
-}
+};

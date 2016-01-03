@@ -15,7 +15,7 @@
         var vm = this;
 
         function passwordMatch() {
-            return (vm.account.password == vm.account.passwordConfirmation)
+            return (vm.account.password === vm.account.passwordConfirmation);
         }
 
         function usernameExistNotify() {
@@ -37,7 +37,7 @@
             });
         }
         function invalidEmail() {
-            return vm.form.$error.email
+            return vm.form.$error.email;
         }
 
         function passwordError() {

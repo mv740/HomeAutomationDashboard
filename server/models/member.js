@@ -2,6 +2,8 @@
  * Created by micha on 10/24/2015.
  */
 
+    'use strict';
+
 var bcrypt = require('bcrypt');
 var crypto = require('crypto');
 
@@ -56,7 +58,7 @@ Member.methods.comparePassword = function (possiblePassword, callback) {
     bcrypt.compare(possiblePassword, this.password, function (error, isMatch) {
         if (error) return callback(error);
         callback(null, isMatch);
-    })
+    });
 };
 
 mongoose.model('MemberModel', Member, 'Member');

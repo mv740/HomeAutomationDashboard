@@ -1,7 +1,7 @@
 /**
  * Created by micha on 8/25/2015.
  */
-
+'use strict';
 // modules ============================================================
 var express = require('express');
 var app = express();

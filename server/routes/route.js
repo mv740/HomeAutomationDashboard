@@ -25,7 +25,9 @@ router.post('/login', function (req, res, next) {
 });
 
 router.get('/logout', function (req, res) {
-    console.log("LOGGING OUT - user : " + req.user.username);
+    if(req.user !== undefined){
+        console.log("LOGGING OUT - user : " + req.user.username);
+    }
     req.logout();
     req.session.destroy(function (err) {
         res.redirect('/');
@@ -67,7 +69,7 @@ router.get('/list/', passport.ensureAuthenticated, function (request, response) 
                         "serviceHide": service.serviceHide
                     };
                     list.push(object);
-                })
+                });
             }
         );
         return response.send(list);
@@ -91,7 +93,7 @@ router.get('/listView/', passport.ensureAuthenticated, function (request, respon
                         };
                         list.push(object);
                     }
-                })
+                });
             }
         );
         return response.send(list);

@@ -57,8 +57,8 @@
         function changeHide(service) {
             $http.put("/api/service/hide", service)
                 .then(function success(response) {
-                },function error(error) {
-                    console.error(error.data);
+                },function error(err) {
+                    console.error(err.data);
                 });
         }
 
@@ -82,9 +82,8 @@
                     vm.formAddService.$setPristine();
                     vm.formAddService.$setUntouched();
                     vm.service = {};
-                    angular.element('div.input-control.full-size').removeClass('.success');
-                }, function error(error) {
-                    console.error(error.data);
+                }, function error(err) {
+                    console.error(err.data);
                 });
         }
 
@@ -114,8 +113,8 @@
             $http.put("/api/service", newService)
                 .then(function success(data) {
                     service.editMode = false;
-                },function error(error) {
-                    console.error(error.data);
+                },function error(err) {
+                    console.error(err.data);
                 });
 
             delete vm.serviceCurrent[index];
@@ -133,8 +132,8 @@
             $http.delete('/api/service', newService)
                 .then(function success() {
                     vm.table.splice(index, 1);
-                }, function error(error) {
-                    console.error(error.data);
+                }, function error(err) {
+                    console.error(err.data);
                 });
         }
     }

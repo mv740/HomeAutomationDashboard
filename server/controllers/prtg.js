@@ -3,28 +3,19 @@
  * @summary PRTG API WRAPPER.
  * @version beta
  */
+
+'use strict';
 var needle = require('needle');
 
 //todo : replace config file by querying database for user id/pass
 var config = require('./../config/prtgConfig');
 
-
 var errorMessage;
-
-//need to understand the process of callback
-//https://github.com/maxogden/art-of-node#callbacks
 
 //http://www.peterbe.com/plog/isint-function
 function isInt(x) {
     var y = parseInt(x, 10);
-    return !isNaN(y) && x == y && x.toString() == y.toString();
-}
-
-//http://durhamhale.com/blog/javascript-version-of-phps-str-replace-function
-String.prototype.str_replace = function (search, replace) {
-
-    return this.split(search).join(replace);
-
+    return !isNaN(y) && x === y && x.toString() === y.toString();
 }
 
 /**
@@ -76,7 +67,7 @@ exports.getSensorDetails = function (id, callback) {
                 "message": "Id must be a integer"
             }
         };
-        callback(errorMessage)
+        callback(errorMessage);
     }
 };
 
@@ -136,7 +127,7 @@ exports.getLoggedUsers = function (id, callback) {
                 "message": "Id must be a integer"
             }
         };
-        return callback(errorMessage)
+        return callback(errorMessage);
     }
 };
 
@@ -540,7 +531,6 @@ exports.getGraph = function (id, hide, callback) {
             errorMessage = {
                 "error": {
                     "functionName": "getCustomSensor",
-                    "tag": tag,
                     "message": "Status Code error",
                     "statusCode": response.statusCode
                 }

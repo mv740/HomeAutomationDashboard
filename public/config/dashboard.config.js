@@ -110,6 +110,6 @@
                     $state.go("login");
                     event.preventDefault();
                 }
-            })
+            });
     }
 })();

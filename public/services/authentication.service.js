@@ -29,9 +29,9 @@
                     $rootScope.globals = SessionService;
                     $cookies.putObject('globals', SessionService);
                     $state.go("demo");
-                }, function error(error) {
+                }, function error(err) {
                     SessionService.authenticated = false;
-                    if (resetForm != null) {
+                    if (resetForm !== null) {
                         resetForm();
                     }
                     failedAuthNotification();
@@ -44,8 +44,8 @@
                     delete $rootScope.globals;
                     $cookies.remove("connect.sid"); //cookie api
                     $state.go('home');
-                }, function error(error) {
-                    console.error(error);
+                }, function error(err) {
+                    console.error(err);
                 });
         };
 
@@ -54,11 +54,11 @@
                 .then(function success(response) {
                     //when register is done, log the user in
                     authService.login(data, null);
-                }, function error(error) {
-                    console.error(error);
-                    if (error.data.status == 'duplicate username') {
+                }, function error(err) {
+                    console.error(err);
+                    if (err.data.status === 'duplicate username') {
                         notify.usernameExist();
-                    } else if (error.data.status == 'duplicate email') {
+                    } else if (err.data.status === 'duplicate email') {
                         notify.emailExist();
                     }
                 });
@@ -81,7 +81,7 @@
             $http.post('/forgot', data)
                 .then(function success(data) {
                     notification.success();
-                }, function error(error) {
+                }, function error(err) {
                     notification.fail();
                 });
         };
@@ -90,18 +90,11 @@
             $http.post('/reset', data)
                 .then(function success(data) {
                     notification.success();
-                }, function error(error) {
+                }, function error(err) {
                     notification.fail();
                 });
         };
-
-        authService.register = function () {
-            $http.post('')
-        };
-
         return authService;
-
-
     }
 
 })();

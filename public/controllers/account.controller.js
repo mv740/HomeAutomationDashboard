@@ -12,7 +12,7 @@
         .module('Dashboard')
         .controller('AccountController', AccountController);
 
-    AccountController.$inject = ['AuthenticationService', '$cookies'];
+    AccountController.$inject = ['AuthenticationService'];
 
     function AccountController(AuthenticationService) {
         var vm = this;
@@ -36,7 +36,7 @@
         };
 
         vm.isActiveTab = function(tabUrl) {
-            return tabUrl == vm.currentTab;
+            return tabUrl === vm.currentTab;
         };
 
 
@@ -49,13 +49,6 @@
 
         vm.showPanel = function(url) {
             vm.activePanel = url;
-        }
-
-
-
-
-
-
+        };
     }
-
 })();

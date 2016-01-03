@@ -9,9 +9,9 @@
         .module('Dashboard')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['AuthenticationService', '$cookies', 'ngNotify'];
+    LoginController.$inject = ['AuthenticationService'];
 
-    function LoginController(AuthenticationService, $cookies, ngNotify) {
+    function LoginController(AuthenticationService) {
         var vm = this;
         vm.error = false;
 
@@ -27,9 +27,6 @@
 
         vm.logout = function () {
             AuthenticationService.logout();
-        }
-
-
+        };
     }
-
 })();

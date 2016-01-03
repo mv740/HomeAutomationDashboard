@@ -12,6 +12,6 @@
         return {
             user: null,
             authenticated: false
-        }
+        };
     }
 })();

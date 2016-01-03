@@ -1,6 +1,8 @@
 /**
  * Created by micha on 12/28/2015.
  */
+    'use strict';
+
 var passport = require('passport');
 var mongoose = require('mongoose');
 require('../../server/models/member');
@@ -36,7 +38,7 @@ module.exports = function (app) {
                         console.error(password);
                         return done(null, false, {message: 'Incorrect password.'});
                     }
-                })
+                });
             });
         }
     ));

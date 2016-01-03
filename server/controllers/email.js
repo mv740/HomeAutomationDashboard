@@ -2,6 +2,8 @@
  * Created by Michal Wozniak on 12/29/2015.
  */
 
+    'use strict';
+
 var nodemailer = require('nodemailer');
 var config = require('../config/email');
 
@@ -48,10 +50,9 @@ exports.emailMessage = function () {
                 from: this.from,
                 subject: this.subject,
                 text: this.text
-            }
+            };
         }
-
-    }
+    };
 };
 /**
  * send the message to the requested users

@@ -1,7 +1,7 @@
 /**
  * Created by micha on 9/7/2015.
  */
-
+'use strict';
 (function () {
     angular
         .module('Dashboard')
@@ -33,9 +33,9 @@
 
         function getTemplateUrl() {
             //basic handling
-            if (vm.type == "prtg")
+            if (vm.type === "prtg")
                 return "/public/views/partials/prtg-service-template.html";
-            if (vm.type == "particle")
+            if (vm.type === "particle")
                 return "/public/views/partials/particle-service-template.html";
         }
 
@@ -43,7 +43,7 @@
 
         function update() {
             vm.callAtInterval = function () {
-                if (vm.type == 'prtg') {
+                if (vm.type === 'prtg') {
                     $http.get('/api/customSensor/' + vm.id)
                         .then(function (response) {
                             // this callback will be called asynchronously
@@ -51,7 +51,7 @@
                             console.log((response.data));
                             vm.test = response.data;
                             //TODO need to divide into two controller one per service type
-                            if (vm.type == "prtg") {
+                            if (vm.type === "prtg") {
                                 if(response.data.error)
                                 {
                                     vm.status = "Warning";
@@ -63,15 +63,15 @@
                                     vm.online = false;
                                     vm.offline = false;
                                     vm.warning = false;
-                                    if (status == 3) {
+                                    if (status === 3) {
                                         vm.status = "Online";
                                         vm.online = true;
                                     }
-                                    if (status == 4) {
+                                    if (status === 4) {
                                         vm.status = "Warning";
                                         vm.warning = true;
                                     }
-                                    if (status == 5) {
+                                    if (status === 5) {
                                         vm.status = "Offline";
                                         vm.offline = true;
                                     }
@@ -104,7 +104,7 @@
             });
 
             vm.stop = $interval(function () {
-                vm.callAtInterval()
+                vm.callAtInterval();
             }, 5000);
         }
     }

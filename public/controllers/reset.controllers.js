@@ -61,7 +61,7 @@
         }
 
         function passwordMatch() {
-            return (vm.account.newPassword == vm.account.passwordConfirmation)
+            return (vm.account.newPassword === vm.account.passwordConfirmation);
         }
 
         vm.resetPassword = function (data) {
@@ -75,6 +75,6 @@
             } else
                 console.log(data);
             AuthenticationService.saveResetPassword(data, notifyReset);
-        }
+        };
     }
 })();

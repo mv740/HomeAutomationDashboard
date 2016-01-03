@@ -37,9 +37,6 @@
 
         function loadServiceViewTable() {
             $http.get('/listView/').then(function (response) {
-                // this callback will be called asynchronously
-                // when the response is available
-                //console.log((response.data));
                 vm.viewServices = response.data;
             });
         }
@@ -52,9 +49,6 @@
             });
             $http.get('/api/list/serviceType')
                 .then(function (response) {
-                    // this callback will be called asynchronously
-                    // when the response is available
-                    console.log((response.data));
                     vm.serviceInfo = response.data;
                     vm.serviceTypeOption = vm.serviceInfo;
                 });

@@ -5,7 +5,7 @@
 var chai = require('chai');
 var expect = require('chai').expect;
 var should = require('chai').should();
-var prtg = require('../server/controllers/prtg');
+var prtg = require('../../server/controllers/prtg');
 
 describe('API-getSensorDetails', function () {
     it('it must return a OBJECT ', function (done) {

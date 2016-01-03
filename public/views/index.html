@@ -32,7 +32,7 @@
     <span class="app-bar-divider"></span>
     <ul class="app-bar-menu">
         <li><a ui-sref="home">Home</a></li>
-        <li><a ui-sref="service">Service</a></li>
+        <li><a ui-sref="services">Services</a></li>
         <li><a ui-sref="demo">Demo</a></li>
         <li><a href="">Help</a></li>
     </ul>
@@ -42,7 +42,7 @@
             <div class="app-bar-drop-container padding10 place-right no-margin-top  block-shadow" data-role="dropdown" data-no-close="true" style="width: 220px">
                 <h2 class="text-light">Quick settings</h2>
                 <ul class="unstyled-list fg-dark" ng-controller="LoginController as authenticate">
-                    <li><a href="" class="fg-white1 fg-hover-yellow">Profile</a></li>
+                    <li><a ui-sref="service/setting" class="fg-white1 fg-hover-yellow">My Services</a></li>
                     <li><a ui-sref="account" class="fg-white2 fg-hover-yellow">My Account</a></li>
                     <li><a class="fg-white3 fg-hover-yellow" ng-click="authenticate.logout()">Logout</a></li>
                 </ul>

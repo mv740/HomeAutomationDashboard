@@ -15,8 +15,8 @@ var crypto = Promise.promisifyAll(require('crypto'));
 var nodemailer = require('./email');
 
 
-exports.initializeServices = function (db, mongoose) {
-
+exports.initializeServices = function () {
+    var db = mongoose.connection;
     var ServicesList = require('./../models/service.config.js');
 
     db.on('open', function () {

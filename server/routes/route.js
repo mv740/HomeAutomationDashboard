@@ -5,20 +5,14 @@
 
 var express = require('express');
 var router = express.Router();
-var prtg = require('../controllers/prtg');
-var particle = require('../controllers/particle');
 var database = require('../controllers/database');
 
 //todo delete this after extracting all our database method into the database js file
 var mongoose = require('mongoose');
 
 
-mongoose.connect('mongodb://localhost/NodeTutorial'); // pool of 5 connection default
-var db = mongoose.connection;
-
-
 //intialize
-database.initializeServices(db, mongoose);
+database.initializeServices();
 
 //todo delete this after extracting all our database method into the database js file
 require('../models/member');
@@ -60,14 +54,11 @@ router.get('/flexmetro', function (request, response) {
 // LIST DIRECTIVE DATABASE TESTING ////////////////////////////////////////////////////////////////
 
 router.get('/list/', passport.ensureAuthenticated, function (request, response) {
-
     MemberModel.findOne({username: request.user.username}, function (err, member) {
-
         var list = [];
         member.ServiceSetting.forEach(function (ServiceSetting) {
                 var serviceType = ServiceSetting.serviceType;
                 ServiceSetting.service.forEach(function (service) {
-                    //console.log(serviceType);
                     var object;
                     object = {
                         "serviceType": serviceType,
@@ -81,22 +72,15 @@ router.get('/list/', passport.ensureAuthenticated, function (request, response) 
         );
         return response.send(list);
     }).lean();
-
 });
 
 router.get('/listView/', passport.ensureAuthenticated, function (request, response) {
 
     MemberModel.findOne({username: request.user.username}, function (err, member) {
-
-        //console.log(database);
-        var serviceType = member.serviceType;
-
         var list = [];
-        //console.log(database);
         member.ServiceSetting.forEach(function (ServiceSetting) {
                 var serviceType = ServiceSetting.serviceType;
                 ServiceSetting.service.forEach(function (service) {
-                    //console.log(serviceType);
                     if (!service.serviceHide) {
                         var object;
                         object = {
@@ -110,17 +94,15 @@ router.get('/listView/', passport.ensureAuthenticated, function (request, respon
                 })
             }
         );
-
         return response.send(list);
     }).lean();
-
 });
 
 router.get('/api/list/serviceType', function (request, response) {
     database.getServiceTypes(request, response);
 });
 
-// password reset ===========================================
+// password reset =======================================================================================
 router.post('/forgot', function (req, res) {
     var email = req.body.email;
     database.generateResetPasswordToken(email, req, res);
@@ -134,26 +116,26 @@ router.post('/reset', function (req, res) {
     database.resetPassword(req, res);
 });
 
-// Account ===================================================
+// Account ================================================================================================
 
 router.post('/account', function (req, res) {
     database.createAccount(req, res);
 });
 
-//SERVICE ====================================================
-router.post('/api/service', function (req, res) {
+//SERVICE ===================================================================================================
+router.post('/api/service', passport.ensureAuthenticated, function (req, res) {
     database.createService(req, res);
 });
 
-router.put('/api/service', function (req, res) {
+router.put('/api/service', passport.ensureAuthenticated, function (req, res) {
     database.updateService(req, res);
 });
 
-router.delete('/api/service', function (req, res) {
+router.delete('/api/service', passport.ensureAuthenticated, function (req, res) {
     database.deleteService(req, res);
 });
 
-router.put('/api/service/hide', function (req, res) {
+router.put('/api/service/hide', passport.ensureAuthenticated, function (req, res) {
     database.hideServices(req, res);
 });
 

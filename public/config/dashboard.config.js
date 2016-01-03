@@ -39,7 +39,7 @@
     config.$inject = ['$stateProvider', '$urlRouterProvider', '$locationProvider', '$httpProvider'];
 
     function config($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
-       // $httpProvider.interceptors.push(interceptor);
+        // $httpProvider.interceptors.push(interceptor);
 
         $urlRouterProvider.otherwise('/home');
         //routing
@@ -49,11 +49,11 @@
                 templateUrl: 'public/views/partials/home.html',
                 authenticate: false
             })
-            .state('service', {
-                url: '/service',
-                templateUrl: 'public/views/partials/service.html',
+            .state('services', {
+                url: '/services',
+                templateUrl: 'public/views/partials/services.html',
                 authenticate: true,
-                controller : 'ServicesController as ctrl'
+                controller: 'ServicesController as ctrl'
             })
             .state('demo', {
                 url: '/demo',
@@ -64,34 +64,42 @@
                 url: '/login',
                 templateUrl: '/public/views/partials/login.html',
                 authenticate: false,
-                controller : "LoginController as ctrl"
+                controller: "LoginController as ctrl"
             })
             .state('forgot', {
                 url: '/forgot',
                 templateUrl: 'public/views/partials/forgot.html',
                 authenticate: false,
-                controller : "ResetController as ctrl"
+                controller: "ResetController as ctrl"
             })
             .state('register', {
                 url: '/register',
                 templateUrl: 'public/views/partials/register.html',
                 authenticate: false,
-                controller : 'RegisterController as ctrl'
+                controller: 'RegisterController as ctrl'
             })
             .state('account', {
                 url: '/account',
                 templateUrl: 'public/views/partials/account.html',
                 authenticate: true,
-                controller : "AccountController as ctrl"
+                controller: "AccountController as ctrl"
             })
             .state('reset', {
                 url: '/reset',
                 templateUrl: 'public/views/partials/reset-password.html',
                 authenticate: false,
-                controller : "ResetController as ctrl"
-            });
+                controller: "ResetController as ctrl"
+            })
+            .state('service/setting', {
+            url: '/service/setting',
+            templateUrl: 'public/views/partials/services-setting.html',
+            authenticate: false
+            //controller: ""
+        });
+
         $locationProvider.html5Mode(true);
     }
+
     run.$inject = ['$rootScope', '$state', 'AuthenticationService', '$cookies'];
     function run($rootScope, $state, AuthenticationService, $cookies) {
         $rootScope.globals = $cookies.getObject('globals');

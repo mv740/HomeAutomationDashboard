@@ -1,0 +1,95 @@
+<div class="margin20">
+    <div style="width: 60rem; background: white; margin-left: auto; margin-right: auto">
+        <div class=" padding20 ">
+            <div>
+                <h1 class="text-light">Services Setting</h1>
+                <hr class="thin bg-blue"/>
+                <br />
+                <div class="grid">
+                    <div class="row cells2">
+                        <div class="cell">
+                            <div class="panel" data-role="panel">
+                                <div class="heading">
+                                    <span class="title">PRTG</span>
+                                </div>
+                                <div class="content">
+                                    <h4 class="text-light">Description</h4>
+                                    <hr class="thin"/>
+                                    <ul class="simple-list">
+                                        <li>Network Monitoring Software</li>
+                                        <li><a href="https://www.paessler.com/prtg">source</a></li>
+                                    </ul>
+                                    <form name="ctrl.form" novalidate ng-submit="ctrl.login(ctrl.account)" >
+                                        <h4 class="text-light">Authentication</h4>
+                                        <hr class="thin"/>
+                                        <br />
+                                        <div class="input-control text full-size" data-role="input">
+                                            <span class="mif-user prepend-icon"></span>
+                                            <input type="text" id="user_login" placeholder="Username" name="user_login" ng-model="ctrl.account.username"  required>
+                                            <button class="button helper-button clear"><span class="mif-cross"></span></button>
+                                        </div>
+                                        <br />
+                                        <br />
+                                        <div class="input-control password full-size" data-role="input">
+                                            <span class="mif-lock prepend-icon"></span>
+                                            <input type="password" ng-model="ctrl.account.password" placeholder="Password" name=user_password" id="user_password" required>
+                                            <button class="button helper-button reveal"><span class="mif-looks"></span></button>
+                                        </div>
+                                        <br />
+                                        <br />
+                                        <div class="form-actions">
+                                            <button type="submit" class="button primary" ng-disabled="!ctrl.form.$valid">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="panel" data-role="panel">
+                                <div class="heading">
+                                    <span class="title">Particule</span>
+                                </div>
+                                <div class="content">
+                                    <h4 class="text-light">Description</h4>
+                                    <hr class="thin"/>
+                                    <ul class="simple-list">
+                                        <li>prototype-to-production platform
+                                            for developing an Internet of Things product</li>
+                                        <li><a href="https://www.particle.io/">source</a></li>
+                                    </ul>
+                                    <form name="ctrl.form" novalidate ng-submit="ctrl.login(ctrl.account)" >
+                                        <h4 class="text-light">Authentication</h4>
+                                        <hr class="thin"/>
+                                        <br />
+                                        <div class="input-control text full-size" data-role="input">
+                                            <span class="mif-user prepend-icon"></span>
+                                            <input type="text" placeholder="Device Id" name="user_device" ng-model="ctrl.account.username"  required>
+                                            <button class="button helper-button clear"><span class="mif-cross"></span></button>
+                                        </div>
+                                        <br />
+                                        <div class="input-control text full-size" data-role="input">
+                                            <span class="mif-user prepend-icon"></span>
+                                            <input type="text" placeholder="Device Name" name="user_device" ng-model="ctrl.account.username"  required>
+                                            <button class="button helper-button clear"><span class="mif-cross"></span></button>
+                                        </div>
+                                        <br />
+                                        <div class="input-control password full-size" data-role="input">
+                                            <span class="mif-lock prepend-icon"></span>
+                                            <input type="password" ng-model="ctrl.account.password" placeholder="Access token" name=user_password" required>
+                                            <button class="button helper-button reveal"><span class="mif-looks"></span></button>
+                                        </div>
+                                        <br />
+                                        <br />
+                                        <div class="form-actions">
+                                            <button type="submit" class="button primary" ng-disabled="!ctrl.form.$valid">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

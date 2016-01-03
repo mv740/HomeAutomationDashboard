@@ -15,14 +15,24 @@ var options = {
 var routes = require('./server/routes/route');
 var prtg = require('./server/routes/prtg');
 var particle = require('./server/routes/particle');
+var mongoose = require('mongoose');
+var config = require('./server/config/config');
+
 
 // configuration ======================================================
+
+//database setup
+
+mongoose.connect(config.db.development); // pool of 5 connection default
+
 // set the static files location
 app.use('/public', express.static(
     __dirname + '/public',
     {
         extensions: ['html']
     }));
+
+//set routes folders
 app.use('/api',prtg);
 app.use('/api/particle',particle);
 app.use('/', routes);

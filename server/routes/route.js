@@ -31,9 +31,9 @@ router.post('/login', function (req, res, next) {
 });
 
 router.get('/logout', function (req, res) {
+    console.log("LOGGING OUT - user : " + req.user.username);
     req.logout();
     req.session.destroy(function (err) {
-        console.log("user is log out");
         res.redirect('/');
     });
 });
@@ -59,16 +59,11 @@ router.get('/flexmetro', function (request, response) {
 
 // LIST DIRECTIVE DATABASE TESTING ////////////////////////////////////////////////////////////////
 
-router.get('/list/',passport.ensureAuthenticated, function (request, response) {
+router.get('/list/', passport.ensureAuthenticated, function (request, response) {
 
     MemberModel.findOne({username: request.user.username}, function (err, member) {
 
-        var serviceType = member.serviceType;
-
         var list = [];
-        //console.log(database);
-
-        console.error(err);
         member.ServiceSetting.forEach(function (ServiceSetting) {
                 var serviceType = ServiceSetting.serviceType;
                 ServiceSetting.service.forEach(function (service) {
@@ -125,43 +120,43 @@ router.get('/api/list/serviceType', function (request, response) {
     database.getServiceTypes(request, response);
 });
 
-router.post('/api/insertService', function (req, res) {
-    database.insertService(req, res);
-});
-
+// password reset ===========================================
 router.post('/forgot', function (req, res) {
     var email = req.body.email;
     database.generateResetPasswordToken(email, req, res);
 });
 
 router.get('/reset/:token', function (req, res) {
-    database.validateResetToken(req,res);
+    database.validateResetToken(req, res);
 });
-
-
 
 router.post('/reset', function (req, res) {
     database.resetPassword(req, res);
 });
 
+// Account ===================================================
 
-router.post('/createAccount', function (req, res) {
+router.post('/account', function (req, res) {
     database.createAccount(req, res);
 });
 
+//SERVICE ====================================================
+router.post('/api/service', function (req, res) {
+    database.createService(req, res);
+});
 
-router.post('/api/updateService', function (req, res) {
+router.put('/api/service', function (req, res) {
     database.updateService(req, res);
 });
 
+router.delete('/api/service', function (req, res) {
+    database.deleteService(req, res);
+});
 
-router.post('/api/hideService', function (req, res) {
+router.put('/api/service/hide', function (req, res) {
     database.hideServices(req, res);
 });
 
-router.post('/api/deleteService', function (req, res) {
-    database.deleteService(req, res);
-});
 
 //Not found ROUTING ===========================================================================================
 

@@ -61,7 +61,7 @@ exports.getServiceTypes = function (request, response) {
 
 };
 
-exports.insertService = function (req, res) {
+exports.createService = function (req, res) {
 
     console.log(req.body);
     var type = req.body.service.type;
@@ -161,37 +161,30 @@ exports.updateService = function (req, res) {
                 if (err != null) {
                     console.log("updateService Error : " + err)
                 }
-
             });
         res.end();
     } else {
-        //nothing to change
         res.end()
     }
 };
 
 exports.deleteService = function (req, res) {
-    console.log(req.body);
-    var type = req.body.service.type;
+    var service = JSON.parse(req.query.service);
     var currentUser = req.user.username;
 
     var newService = {
-        serviceName: req.body.service.name
+        serviceName: service.name
     };
     //The $pull operator removes from an existing array all instances of a value or values that match a specified condition.
     MemberModel.findOneAndUpdate({
             username: currentUser,
-            "ServiceSetting.serviceType": type,
-            "ServiceSetting.service.serviceName": req.body.service.name
+            "ServiceSetting.serviceType": service.type,
+            "ServiceSetting.service.serviceName": service.name
         },
         {$pull: {"ServiceSetting.$.service": newService}},
         function (err, model) {
             console.log(err);
-            //console.log(models);
         });
-
-
-    //console.log(req.body.service.type);
     res.end();
 };
 
@@ -370,14 +363,14 @@ exports.generateResetPasswordToken = function (email, req, res) {
                         res.status(409).send({'error': 'reset process failed to start'});
                     } else
                         sendResetEmail(data);
-                        res.end();
+                    res.end();
                 });
             }
         });
     }
 };
 
-exports.validateResetToken = function (req,res) {
+exports.validateResetToken = function (req, res) {
     MemberModel.findOne({
         resetPasswordToken: req.params.token,
         resetPasswordExpires: {$gt: Date.now()}

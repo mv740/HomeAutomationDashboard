@@ -50,7 +50,7 @@
         };
 
         authService.registration = function (data, notify) {
-            $http.post('/createAccount', data)
+            $http.post('/account', data)
                 .then(function success(response) {
                     //when register is done, log the user in
                     authService.login(data, null);

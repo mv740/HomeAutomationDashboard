@@ -22,9 +22,7 @@ module.exports = function (app) {
             passwordField: 'password'
         },
         function (username, password, done) {
-            console.log(username + ":" + password);
             MemberModel.findOne({username: username}, function (err, user) {
-                //console.log(user);
                 if (err) {
                     return done(err);
                 }
@@ -55,7 +53,6 @@ module.exports = function (app) {
 
 
     passport.authentication = function (req, res, next) {
-        console.log(req.body);
         passport.authenticate('local', function (err, user, info) {
             if (err) {
                 return next(err); // will generate a 500 error
@@ -68,10 +65,10 @@ module.exports = function (app) {
                 if (err) {
                     return next(err);
                 }
+                console.log("AUTHENTICATION SUCCESSFUL - user : "+req.body.username);
                 return res.send({success: true, message: 'authentication succeeded', username: req.body.username});
             });
         })(req, res, next);
-
     };
 
      passport.ensureAuthenticated = function (req, res, next) {

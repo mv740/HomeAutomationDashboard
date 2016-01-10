@@ -15,7 +15,7 @@ var ServiceModel = mongoose.model('ServiceModel');
 var account = require('../config/email');
 var Promise = require("bluebird");
 var crypto = Promise.promisifyAll(require('crypto'));
-var nodemailer = require('./email');
+var nodemailer = require('./../models/email');
 
 
 exports.initializeServices = function () {

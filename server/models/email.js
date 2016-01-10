@@ -2,7 +2,7 @@
  * Created by Michal Wozniak on 12/29/2015.
  */
 
-    'use strict';
+'use strict';
 
 var nodemailer = require('nodemailer');
 var config = require('../config/email');
@@ -21,7 +21,7 @@ exports.emailMessage = function () {
             return this;
         },
         /**
-            @param {String} From - sender address
+         @param {String} From - sender address
          */
         from: function (From) {
             this.from = From;
@@ -45,12 +45,18 @@ exports.emailMessage = function () {
          * return Email message
          */
         build: function () {
-            return {
-                to: this.to,
-                from: this.from,
-                subject: this.subject,
-                text: this.text
-            };
+
+            var message = {};
+            if (typeof this.to !== 'function')
+                message.to = this.to;
+            if (typeof this.from !== 'function')
+                message.from = this.from;
+            if (typeof this.subject !== 'function')
+                message.subject = this.subject;
+            if (typeof this.text !== 'function')
+                message.text = this.text;
+
+            return message;
         }
     };
 };

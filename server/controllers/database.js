@@ -13,8 +13,8 @@ require('./../models/service');
 var ServiceModel = mongoose.model('ServiceModel');
 
 var account = require('../config/email');
-var Promise = require("bluebird");
-var crypto = Promise.promisifyAll(require('crypto'));
+var promise = require("bluebird");
+var crypto = promise.promisifyAll(require('crypto'));
 var nodemailer = require('./../models/email');
 
 
@@ -60,10 +60,8 @@ exports.getServiceTypes = function (request, response) {
                 list.push(object);
             }
         );
-
         return response.send(list);
     }).lean();
-
 };
 
 exports.createService = function (req, res) {

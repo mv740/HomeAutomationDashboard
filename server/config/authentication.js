@@ -9,7 +9,6 @@ require('../../server/models/member');
 var MemberModel = mongoose.model('MemberModel');
 var LocalStrategy = require('passport-local').Strategy;
 var session = require('express-session');
-var flash = require('connect-flash');
 var bodyParser = require('body-parser');
 
 // =========================================================================
@@ -43,14 +42,27 @@ module.exports = function (app) {
         }
     ));
     // used to serialize the user for the session
-    passport.serializeUser(function (user, done) {
-        done(null, user.id);
+    //passport.serializeUser(function (user, done) {
+    //    done(null, user.id);
+    //});
+    passport.serializeUser( (user,done) => {
+        var sessionUser = {
+            _id: user.id,
+            username : user.username,
+            email : user.email
+        };
+        done(null,sessionUser);
     });
     // used to deserialize the user
-    passport.deserializeUser(function (id, done) {
-        MemberModel.findById(id, function (err, user) {
-            done(err, user);
-        });
+    //passport.deserializeUser(function (id, done) {
+    //    MemberModel.findById(id, function (err, user) {
+    //        console.error(user);
+    //        done(err, user);
+    //    });
+    //});
+    passport.deserializeUser( (sessionUser, done) => {
+        console.error(sessionUser);
+        done(null,sessionUser);
     });
 
 
@@ -80,7 +92,6 @@ module.exports = function (app) {
             next();
     };
 
-    app.use(flash());
     app.use(bodyParser.urlencoded({
         extended: true
     }));

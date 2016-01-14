@@ -7,6 +7,7 @@ var expect = require('chai').expect;
 var should = require('chai').should();
 var database = require('../../server/controllers/database');
 var mongoose = require('mongoose');
+var utils = require('../utils');
 
 //https://www.terlici.com/2014/09/15/node-testing.html
 //todo create new test database before each test and then drop them after

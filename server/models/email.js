@@ -5,7 +5,7 @@
 'use strict';
 
 var nodemailer = require('nodemailer');
-var config = require('../config/email');
+var config = require('../config/config');
 
 /**
  * generate a email message object
@@ -66,8 +66,8 @@ exports.emailMessage = function () {
  */
 exports.send = function (emailMessage) {
     var smtp = nodemailer.createTransport({
-        service: config.service,
-        auth: config.account
+        service: config.email.service,
+        auth: config.email.account
     });
 
     smtp.sendMail(emailMessage, function (error) {

@@ -11,8 +11,6 @@ var MemberModel = mongoose.model('MemberModel');
 
 require('./../models/service');
 var ServiceModel = mongoose.model('ServiceModel');
-
-var account = require('../config/email');
 var promise = require("bluebird");
 var crypto = promise.promisifyAll(require('crypto'));
 var nodemailer = require('./../models/email');
@@ -264,7 +262,6 @@ exports.createAccount = function (req, res) {
                     "ServiceSetting": serviceList
                 }
             );
-
 
             newMember.save(function (error, newAccount) {
                 if (error) {

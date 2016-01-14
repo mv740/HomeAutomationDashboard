@@ -97,10 +97,10 @@ module.exports = function (app) {
     }));
     app.use(bodyParser.json());
     app.use(session({
-        secret: 'keyboard cat',
+        secret: '12e12e1e34rdf454g45t56yd45654y6ry67r6uyru',
         resave: false,
         saveUninitialized: true,
-        cookie: {secured: false}
+        cookie: {secured: true}
     }));
     app.use(passport.initialize());
     app.use(passport.session());

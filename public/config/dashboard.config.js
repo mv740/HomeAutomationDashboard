@@ -60,6 +60,11 @@
                 templateUrl: 'public/views/demo.html',
                 authenticate: true
             })
+            .state('help', {
+                url: '/help',
+                templateUrl: 'public/views/partials/help.html',
+                authenticate: false
+            })
             .state('login', {
                 url: '/login',
                 templateUrl: '/public/views/partials/login.html',
@@ -93,7 +98,7 @@
             .state('service/setting', {
             url: '/service/setting',
             templateUrl: 'public/views/partials/services-setting.html',
-            authenticate: false
+            authenticate: true
             //controller: ""
         });
 

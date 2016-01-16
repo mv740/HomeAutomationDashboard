@@ -7,12 +7,12 @@
                 <br />
                 <div class="tabcontrol">
                     <ul class="tabs">
-                        <li ng-repeat="item in ctrl.items" ng-class="{'active':(ctrl.activePanel==item.url)}">
+                        <li ng-repeat="item in ctrl.tabs" ng-class="{'active':(ctrl.activePanel==item.url)}">
                             <a ng-click="ctrl.showPanel(item.url)">{{item.title}}</a>
                         </li>
                     </ul>
                     <div class="frames">
-                        <div ng-repeat="item in ctrl.items" class="frame bg-white" ng-show="(ctrl.activePanel == item.url)">
+                        <div ng-repeat="item in ctrl.tabs" class="frame bg-white" ng-show="(ctrl.activePanel == item.url)">
                             <div ng-include="item.url"></div>
                         </div>
                     </div>

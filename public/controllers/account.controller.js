@@ -22,7 +22,7 @@
 
         vm.tabs = [{
             title: 'Change Username',
-            url: 'public/account-username.html'
+            url: 'public/views/partials/account-username.html'
         }, {
             title: 'Change Password',
             url: 'public/views/partials/account-password.html'
@@ -32,23 +32,22 @@
 
         vm.onClickTab = function (tab) {
             vm.currentTab = tab.url;
-            console.log(tab);
         };
 
         vm.isActiveTab = function(tabUrl) {
             return tabUrl === vm.currentTab;
         };
 
-
-        vm.items = [
-            { title: 'Change username', url: 'public/views/partials/account-username.html'},
-            { title: 'Change password', url: 'public/views/partials/account-password.html'}
-        ];
-
         vm.activePanel = 'public/views/partials/account-username.html';
 
         vm.showPanel = function(url) {
             vm.activePanel = url;
+        };
+
+        vm.usernameUpdate = function(account)
+        {
+            console.log(account);
+            AuthenticationService.account.usernameUpdate(account);
         };
     }
 })();

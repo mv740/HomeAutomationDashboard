@@ -124,6 +124,11 @@ router.post('/account', function (req, res) {
     database.createAccount(req, res);
 });
 
+router.put('/account', function (req, res) {
+   res.end();
+});
+
+
 //SERVICE ===================================================================================================
 router.post('/api/service', passport.ensureAuthenticated, function (req, res) {
     database.createService(req, res);

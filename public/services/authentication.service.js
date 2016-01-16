@@ -13,6 +13,7 @@
     function AuthenticationService($http, SessionService, $state, $rootScope, $cookies, ngNotify) {
 
         var authService = {};
+        authService.account = {};
 
         function failedAuthNotification() {
             ngNotify.set('Authentication Failed, please try again!', {
@@ -24,13 +25,9 @@
         authService.login = function (data, resetForm) {
             $http.post('/login', data)
                 .then(function success(response) {
-                    SessionService.authenticated = true;
-                    SessionService.user = data.username;
-                    $rootScope.globals = SessionService;
-                    $cookies.putObject('globals', SessionService);
+                    SessionService.create(data.username);
                     $state.go("demo");
                 }, function error(err) {
-                    SessionService.authenticated = false;
                     if (resetForm !== null) {
                         resetForm();
                     }
@@ -40,9 +37,7 @@
         authService.logout = function () {
             $http.get('/logout')
                 .then(function success(data) {
-                    $cookies.remove("globals");
-                    delete $rootScope.globals;
-                    $cookies.remove("connect.sid"); //cookie api
+                    SessionService.destroy();
                     $state.go('home');
                 }, function error(err) {
                     console.error(err);
@@ -64,11 +59,47 @@
                 });
         };
 
+        authService.account.usernameUpdate = function(data)
+        {
+            $http.put('/account',data)
+            .then(function success(response)
+            {
+                SessionService.update(data.username);
+
+                ngNotify.set('Username was successfully changed!', {
+                    position: 'top',
+                    type: 'success'
+                });
+            }, function error(err)
+            {
+                ngNotify.set('Please use a different username, it\'s already used', {
+                    position: 'top',
+                    type: 'error'
+                });
+            });
+        };
+
+        authService.account.passwordUpdate = function(data)
+        {
+            $http.put('/account',data)
+                .then(function success(response)
+                {
+                    ngNotify.set('password was successfully changed!', {
+                        position: 'top',
+                        type: 'success'
+                    });
+                }, function error(err)
+                {
+                    ngNotify.set('Error, please try again', {
+                        position: 'top',
+                        type: 'error'
+                    });
+                });
+        };
 
         authService.isAuthenticated = function () {
-            var globalsExist = $cookies.getObject('globals');
-            if (globalsExist) {
-                return globalsExist.authenticated;
+            if (SessionService.get()) {
+                return SessionService.get().authenticated;
             }
             return false;
         };

@@ -25,7 +25,7 @@
         authService.login = function (data, resetForm) {
             $http.post('/login', data)
                 .then(function success(response) {
-                    SessionService.create(data.username);
+                    SessionService.start(data.username);
                     $state.go("demo");
                 }, function error(err) {
                     if (resetForm !== null) {
@@ -105,7 +105,7 @@
         };
 
         authService.getUserName = function () {
-            return $rootScope.globals.user;
+            return SessionService.getUserName();
         };
 
         authService.resetPassword = function (data, notification) {

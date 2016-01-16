@@ -100,9 +100,9 @@
         $locationProvider.html5Mode(true);
     }
 
-    run.$inject = ['$rootScope', '$state', 'AuthenticationService', '$cookies'];
-    function run($rootScope, $state, AuthenticationService, $cookies) {
-        $rootScope.globals = $cookies.getObject('globals');
+    run.$inject = ['$rootScope', '$state', 'AuthenticationService','SessionService'];
+    function run($rootScope, $state, AuthenticationService, SessionService) {
+        $rootScope.session = SessionService.get();
 
         $rootScope.$on("$stateChangeStart",
             function (event, toState, toParams, fromState, fromParams) {

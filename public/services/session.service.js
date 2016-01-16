@@ -13,31 +13,39 @@
     function SessionService($cookies, $rootScope) {
 
         var session = {};
-        var cookie = "globals";
+        var cookie = 'session';
 
-        session.create = function (username) {
-            var session = {
-                user: username,
-                authenticated: true
-            };
-            $rootScope.globals = session;
-            $cookies.putObject(cookie, session);
+        session.default = {
+            user: 'undefined',
+            authenticated: false
+        };
+
+        session.start = function (username) {
+            $rootScope.session.user = username;
+            $rootScope.session.authenticated = true;
+            $cookies.putObject(cookie, $rootScope.session);
         };
 
         session.get = function () {
-            return $cookies.getObject(cookie);
+            return $cookies.getObject(cookie) || session.default;
+        };
+
+        session.getUserName = function () {
+            return $rootScope.session.user;
         };
 
         session.update = function (newUsername) {
             var session = $cookies.getObject(cookie);
             session.user = newUsername;
-            $rootScope.globals.user = newUsername;
+            $rootScope.session.user = newUsername;
             $cookies.putObject(cookie, session);
         };
 
         session.destroy = function () {
             $cookies.remove(cookie);
-            delete $rootScope.globals;
+            $rootScope.session.user = 'undefined';
+            $rootScope.session.authenticated = false;
+            //delete $rootScope.session;
         };
 
         return session;

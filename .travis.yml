@@ -1,0 +1,17 @@
+language: node_js
+env:
+  - CXX=g++-4.8
+node_js:
+  - "5.4.0"
+ addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+install:
+  - npm install -g mocha
+services:
+  - mongodb
+before_script:
+  - mocha -version

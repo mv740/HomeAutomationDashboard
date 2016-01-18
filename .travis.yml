@@ -5,6 +5,7 @@ env:
   - CXX=g++-4.8
 install:
   - npm install -g mocha
+  - npm install
 services:
   - mongodb
 before_script:

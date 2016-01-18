@@ -8,4 +8,4 @@ install:
 services:
   - mongodb
 before_script:
-  - mocha -version
+  - mocha --version

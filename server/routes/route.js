@@ -100,52 +100,29 @@ router.get('/listView/', passport.ensureAuthenticated, function (request, respon
     }).lean();
 });
 
-router.get('/api/list/serviceType', function (request, response) {
-    database.getServiceTypes(request, response);
-});
+router.get('/api/list/serviceType', database.getServiceTypes);
 
 // password reset =======================================================================================
-router.post('/forgot', function (req, res) {
-    var email = req.body.email;
-    database.generateResetPasswordToken(email, req, res);
-});
 
-router.get('/reset/:token', function (req, res) {
-    database.validateResetToken(req, res);
-});
-
-router.post('/reset', function (req, res) {
-    database.resetPassword(req, res);
-});
+router.post('/forgot', database.generateResetPasswordToken);
+router.get('/reset/:token', database.validateResetToken);
+router.post('/reset', database.resetPassword);
 
 // Account ================================================================================================
 
-router.post('/account', function (req, res) {
-    database.createAccount(req, res);
-});
+router.post('/account', database.createAccount);
 
+//todo
 router.put('/account', function (req, res) {
    res.end();
 });
 
 
 //SERVICE ===================================================================================================
-router.post('/api/service', passport.ensureAuthenticated, function (req, res) {
-    database.createService(req, res);
-});
-
-router.put('/api/service', passport.ensureAuthenticated, function (req, res) {
-    database.updateService(req, res);
-});
-
-router.delete('/api/service', passport.ensureAuthenticated, function (req, res) {
-    database.deleteService(req, res);
-});
-
-router.put('/api/service/hide', passport.ensureAuthenticated, function (req, res) {
-    database.hideServices(req, res);
-});
-
+router.post('/api/service', passport.ensureAuthenticated, database.createService);
+router.put('/api/service', passport.ensureAuthenticated, database.updateService);
+router.delete('/api/service', passport.ensureAuthenticated, database.deleteService);
+router.put('/api/service/hide', passport.ensureAuthenticated, database.hideServices);
 
 //Not found ROUTING ===========================================================================================
 

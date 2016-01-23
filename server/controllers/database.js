@@ -317,7 +317,8 @@ exports.resetPassword = function (req, res) {
     }
 };
 
-exports.generateResetPasswordToken = function (email, req, res) {
+exports.generateResetPasswordToken = function (req, res) {
+    var email = req.body.email;
 
     return generateRandomBytes()
         .then(BytesToHexString)

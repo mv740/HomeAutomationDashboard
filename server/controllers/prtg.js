@@ -30,10 +30,8 @@ exports.getSensorDetails = function (id, callback) {
         needle.get(config.host + '/api/getsensordetails.json?id=' + id + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
             if (!error && response.statusCode === 200) {
                 if ((response.body.sensordata.name.length !== 0) && (response.body.sensordata.sensortype !== "(Object not found)")) {
-                    var prtg = {"prtg": response.body};
-                    return callback(prtg);
+                    return callback({'prtg':response.body});
                 } else {
-                    //console.log("getSensorDetails --- Sensor " + id + " not found");
                     errorMessage = {
                         'error': {
                             "functionName": "getSensorDetails",
@@ -45,7 +43,6 @@ exports.getSensorDetails = function (id, callback) {
                     return callback(errorMessage);
                 }
             } else {
-                //console.log("getSensorDetails(" + id + ") error");
                 errorMessage = {
                     "error": {
                         "functionName": "getSensorDetails",
@@ -59,7 +56,6 @@ exports.getSensorDetails = function (id, callback) {
             }
         });
     } else {
-        //throw new Error("id -> " + id + " is not a integer!")
         errorMessage = {
             "error": {
                 "functionName": "getSensorDetails",
@@ -67,7 +63,7 @@ exports.getSensorDetails = function (id, callback) {
                 "message": "Id must be a integer"
             }
         };
-        callback(errorMessage);
+        return callback(errorMessage);
     }
 };
 
@@ -84,18 +80,15 @@ exports.getLoggedUsers = function (id, callback) {
     if (isInt(id)) {
         needle.get(config.host + '/api/getsensordetails.json?id=' + id + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
             if (!error && response.statusCode === 200) {
-                if ((response.body.sensordata.name.length !== 0) && (response.body.sensordata.sensortype !== "(Object not found)")) {
-                    //console.log("Sensor id =" + id + "; name=" + response.body.sensordata.name);
+                if ((response.body.sensordata.sensortype === "ptfloggedinusers")) {
                     var body = response.body;
                     //keep only username
                     if (parseInt(body.sensordata.lastvalue) >= 1) {
                         var user = body.sensordata.lastmessage.match(/User(.*) is/);
                         body.sensordata.lastmessage = user[1];
                     }
-                    var prtg = {"prtg": body};
-                    return callback(prtg);
+                    return callback({"prtg": body});
                 } else {
-                    //console.log("getSensorDetails --- Sensor " + id + " not found");
                     errorMessage = {
                         "error": {
                             "functionName": "getLoggedUsers",
@@ -107,7 +100,6 @@ exports.getLoggedUsers = function (id, callback) {
                     return callback(errorMessage);
                 }
             } else {
-                //console.log("getSensorDetails(" + id + ") error");
                 errorMessage = {
                     "error": {
                         "functionName": "getLoggedUsers",
@@ -133,7 +125,6 @@ exports.getLoggedUsers = function (id, callback) {
 
 /**
  * lightweight option to get status data like number of alarms, messages, etc.:
- * @param {int} id
  * @param callback
  * @return {JSON} Object
  */
@@ -141,10 +132,8 @@ exports.getSystemStatus = function (callback) {
     // prtg system is aways sensor id=>0
     needle.get(config.host + '/api/getstatus.htm?id=0&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
         if (!error && response.statusCode === 200) {
-            var prtg = {"prtg": JSON.parse(response.body)};
-            return callback(prtg);
+            return callback({"prtg": JSON.parse(response.body)});
         } else {
-            //console.log("getSensorDetails(" + id + ") error");
             errorMessage = {
                 "error": {
                     "functionName": "getSystemStatus",
@@ -169,8 +158,7 @@ exports.getDevice = function (tag, callback) {
     needle.get(config.host + '/api/table.json?content=sensors&output=json&columns=objid,device,sensor,status,lastvalue,tags&filter_tags=' + tag + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
         if (!error && response.statusCode === 200) {
             if (response.body.treesize > 0) {
-                var prtg = {"prtg": response.body};
-                return callback(prtg);
+                return callback({"prtg": response.body});
             } else {
                 errorMessage = {
                     "error": {
@@ -205,34 +193,47 @@ exports.getDevice = function (tag, callback) {
  */
 exports.getMemory = function (id, callback) {
 
-    needle.get(config.host + '/api/table.json?content=sensors&output=json&columns=objid,device,sensor,status,lastvalue,tags&filter_tags=memory&id=' + id + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
-        if (!error && response.statusCode === 200) {
-            if (response.body.treesize > 0) {
-                var prtg = {"prtg": response.body};
-                return callback(prtg);
+    if (isInt(id)) {
+        //memory tag
+        needle.get(config.host + '/api/table.json?content=sensors&output=json&columns=objid,probe,group,device,sensor,status,message,lastvalue,priority,favorite,tags&id=' + id + '&filter_tags=memorysensor&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
+            if (!error && response.statusCode === 200) {
+                if (response.body.treesize > 0) {
+                    var prtg = {"prtg": response.body};
+                    return callback(prtg);
+                } else {
+                    errorMessage = {
+                        "error": {
+                            "functionName": "getMemory",
+                            "id": id,
+                            "message": "This device has no memory sensor ",
+                            "statusCode": response.statusCode
+                        }
+                    };
+                    return callback(errorMessage);
+                }
             } else {
                 errorMessage = {
                     "error": {
                         "functionName": "getMemory",
                         "id": id,
-                        "message": "This device has no memory sensor ",
+                        "message": "Status Code error",
                         "statusCode": response.statusCode
                     }
                 };
                 return callback(errorMessage);
             }
-        } else {
-            errorMessage = {
-                "error": {
-                    "functionName": "getMemory",
-                    "id": id,
-                    "message": "Status Code error",
-                    "statusCode": response.statusCode
-                }
-            };
-            return callback(errorMessage);
-        }
-    });
+        });
+    } else {
+        errorMessage = {
+            "error": {
+                "functionName": "getMemory",
+                "id": id,
+                "message": "Id must be a integer"
+            }
+        };
+        return callback(errorMessage);
+    }
+
 };
 
 /**
@@ -243,35 +244,45 @@ exports.getMemory = function (id, callback) {
  * @return {JSON} Object
  */
 exports.getCPU = function (id, callback) {
-
-    needle.get(config.host + '/api/table.json?content=sensors&output=json&columns=objid,device,sensor,status,lastvalue,tags&filter_tags=cpuloadsensor&id=' + id + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
-        if (!error && response.statusCode === 200) {
-            if (response.body.treesize > 0) {
-                var prtg = {"prtg": response.body};
-                return callback(prtg);
+    if (isInt(id)) {
+        needle.get(config.host + '/api/table.json?content=sensors&output=json&columns=objid,device,sensor,status,lastvalue,tags&filter_tags=cpuloadsensor&id=' + id + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
+            if (!error && response.statusCode === 200) {
+                if (response.body.treesize > 0) {
+                    var prtg = {"prtg": response.body};
+                    return callback(prtg);
+                } else {
+                    errorMessage = {
+                        "error": {
+                            "functionName": "getCPU",
+                            "id": id,
+                            "message": "This device has no cpu sensor ",
+                            "statusCode": response.statusCode
+                        }
+                    };
+                    return callback(errorMessage);
+                }
             } else {
                 errorMessage = {
                     "error": {
                         "functionName": "getCPU",
                         "id": id,
-                        "message": "This device has no cpu sensor ",
+                        "message": "Status Code error",
                         "statusCode": response.statusCode
                     }
                 };
                 return callback(errorMessage);
             }
-        } else {
-            errorMessage = {
-                "error": {
-                    "functionName": "getCPU",
-                    "id": id,
-                    "message": "Status Code error",
-                    "statusCode": response.statusCode
-                }
-            };
-            return callback(errorMessage);
-        }
-    });
+        });
+    } else {
+        errorMessage = {
+            "error": {
+                "functionName": "getCPU",
+                "id": id,
+                "message": "Id must be a integer"
+            }
+        };
+        return callback(errorMessage);
+    }
 };
 
 /**
@@ -282,35 +293,46 @@ exports.getCPU = function (id, callback) {
  * @return {JSON} Object
  */
 exports.getDisk = function (id, callback) {
-
-    needle.get(config.host + '/api/table.json?content=sensors&output=json&columns=objid,device,sensor,status,lastvalue,tags&filter_tags=getDisk&id=' + id + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
-        if (!error && response.statusCode === 200) {
-            if (response.body.treesize > 0) {
-                var prtg = {"prtg": response.body};
-                return callback(prtg);
+    if (isInt(id)){
+        needle.get(config.host + '/api/table.json?content=sensors&output=json&columns=objid,device,sensor,status,lastvalue,tags&filter_tags=diskspacesensor&id=' + id + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
+            if (!error && response.statusCode === 200) {
+                if (response.body.treesize > 0) {
+                    var prtg = {"prtg": response.body};
+                    return callback(prtg);
+                } else {
+                    errorMessage = {
+                        "error": {
+                            "functionName": "getDisk",
+                            "id": id,
+                            "message": "This device has no disk sensor ",
+                            "statusCode": response.statusCode
+                        }
+                    };
+                    return callback(errorMessage);
+                }
             } else {
                 errorMessage = {
                     "error": {
                         "functionName": "getDisk",
                         "id": id,
-                        "message": "This device has no disk sensor ",
+                        "message": "Status Code error",
                         "statusCode": response.statusCode
                     }
                 };
                 return callback(errorMessage);
             }
-        } else {
-            errorMessage = {
-                "error": {
-                    "functionName": "getDisk",
-                    "id": id,
-                    "message": "Status Code error",
-                    "statusCode": response.statusCode
-                }
-            };
-            return callback(errorMessage);
-        }
-    });
+        });
+
+    }else {
+        errorMessage = {
+            "error": {
+                "functionName": "getDisk",
+                "id": id,
+                "message": "Id must be a integer"
+            }
+        };
+        return callback(errorMessage);
+    }
 };
 
 /**
@@ -325,7 +347,6 @@ exports.getLogs = function (limit, maxMessageLenght, callback) {
     limit = limit || ""; // specified limit or all of them
     maxMessageLenght = maxMessageLenght || 30;
 
-
     needle.get(config.host + '/api/table.json?content=messages&output=json&columns=objid,datetime,parent,type,name,status,message&count=' + limit + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
         if (!error && response.statusCode === 200) {
             if (response.body.treesize > 0) {
@@ -336,7 +357,9 @@ exports.getLogs = function (limit, maxMessageLenght, callback) {
                         messages[message].message_raw = (messages[message].message_raw).substr(0, maxMessageLenght) + "...";
                     }
                 }
-                var prtg = {"prtg": messages};
+                var prtg = {"prtg": {
+                    "messages" : messages
+                }};
                 callback(prtg);
             } else {
                 errorMessage = {
@@ -363,10 +386,9 @@ exports.getLogs = function (limit, maxMessageLenght, callback) {
 
 };
 
-//TODO : need to verify errorMEssage
 
 /**
- *
+ *All devices from one group
  * @param groupID
  * @param callback
  */
@@ -381,7 +403,7 @@ exports.getGroupDevices = function (groupID, callback) {
                 errorMessage = {
                     'error': {
                         "functionName": "getGroupDevices",
-                        "message": "Logs are empty",
+                        "message": "Groups is empty",
                         "statusCode": response.statusCode
                     }
                 };
@@ -391,6 +413,44 @@ exports.getGroupDevices = function (groupID, callback) {
             errorMessage = {
                 "error": {
                     "functionName": "getGroupDevices",
+                    "message": "Status Code error",
+                    "statusCode": response.statusCode
+                }
+
+            };
+            return callback(errorMessage);
+        }
+    });
+
+};
+
+/**
+ *List of all groups
+ *
+ * @param groupID
+ * @param callback
+ */
+exports.getGroupList = function (callback) {
+
+    needle.get(config.host + 'api/table.json?content=groups&output=json&columns=objid,probe,group,name,downsens,partialdownsens,downacksens,upsens,warnsens,pausedsens,unusualsens,undefinedsens&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
+        if (!error && response.statusCode === 200) {
+            if (response.body.treesize > 0) {
+                var prtg = {"prtg": response.body};
+                return callback(prtg);
+            } else {
+                errorMessage = {
+                    'error': {
+                        "functionName": "getGroupList",
+                        "message": "There isn't any groups",
+                        "statusCode": response.statusCode
+                    }
+                };
+                return callback(errorMessage);
+            }
+        } else {
+            errorMessage = {
+                "error": {
+                    "functionName": "getGroupList",
                     "message": "Status Code error",
                     "statusCode": response.statusCode
                 }
@@ -520,7 +580,8 @@ exports.getCustomSensor = function (tag, callback) {
 exports.getGraph = function (id, hide, callback) {
     var hideCorrected = "";
     if (typeof hide !== 'undefined') {
-        hideCorrected = hide.str_replace('.', ',');
+        //hideCorrected = hide.str_replace('.', ',');
+        hideCorrected = hide.replace(/\./g, ',');
     }
     console.log(hideCorrected);
     needle.get(config.host + '/chart.svg?type=graph&graphid=0&graphstyling=baseFontSize%3D%2712%27&graphtitle=%40%40notitle%40%40&width=600&height=220&hide=' + hideCorrected + '&id=' + id + '&username=' + config.authentication.username + '&password=' + config.authentication.password, {rejectUnauthorized: false}, function (error, response) {
